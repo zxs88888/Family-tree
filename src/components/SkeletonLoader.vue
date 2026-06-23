@@ -9,10 +9,30 @@
 </template>
 
 <style>
-.skeleton-loader { padding: var(--spacing-lg); }
-.skeleton-circle {
-  width: 80px; height: 80px; border-radius: 50%; margin: var(--spacing-lg) auto;
+.skeleton-loader {
+  padding: var(--spacing-lg);
 }
-.skeleton-line { height: 16px; border-radius: var(--radius-sm); margin: var(--spacing-sm) 0; }
-.w-60 { width: 60%; } .w-80 { width: 80%; } .w-40 { width: 40%; } .w-70 { width: 70%; }
+.skeleton-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: var(--spacing-lg) auto;
+}
+.skeleton-line {
+  height: 16px;
+  border-radius: var(--radius-sm);
+  margin: var(--spacing-sm) 0;
+}
+.w-60 {
+  width: 60%;
+}
+.w-80 {
+  width: 80%;
+}
+.w-40 {
+  width: 40%;
+}
+.w-70 {
+  width: 70%;
+}
 </style>
