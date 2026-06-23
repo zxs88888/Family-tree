@@ -1,0 +1,6 @@
+{
+  "terminal.integrated.env.osx": {
+    "NVM_DIR": "${env:HOME}/.nvm"
+  },
+  "terminal.integrated.defaultProfile.osx": "zsh"
+}

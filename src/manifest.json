@@ -1,0 +1,14 @@
+{
+  "name": "家族族谱",
+  "appid": "",
+  "versionName": "1.0.0",
+  "versionCode": "1",
+  "transformPseudo": true,
+  "h5": {
+    "title": "家族族谱",
+    "template": "index.html",
+    "router": {
+      "base": "/"
+    }
+  }
+}
