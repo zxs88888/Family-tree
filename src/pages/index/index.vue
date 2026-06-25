@@ -76,6 +76,17 @@ const accessCodeVerified = ref(userStore.accessCodeVerified);
 
 const VITE_FAMILY_ID = import.meta.env.VITE_FAMILY_ID;
 
+async function checkAdminSession() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session?.user?.app_metadata?.provider !== 'email') return;
+
+  userStore.isAdmin = true;
+  userStore.accessCodeVerified = true;
+  localStorage.setItem('access_code_verified', 'true');
+  accessCodeVerified.value = true;
+  await loadAllMembers();
+}
+
 async function loadAllMembers() {
   familyStore.loading = true;
   try {
@@ -170,7 +181,8 @@ function onOnboardingSkip() {
 }
 
 onMounted(async () => {
-  if (accessCodeVerified.value) {
+  await checkAdminSession();
+  if (accessCodeVerified.value && !familyStore.loaded) {
     await loadAllMembers();
   }
 });
