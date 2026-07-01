@@ -6,9 +6,17 @@
 
 <script setup>
 import { onLaunch } from "@dcloudio/uni-app";
+import { supabase } from "@/utils/supabase";
 
-onLaunch(() => {
-  console.log("家族族谱应用已启动");
+onLaunch(async () => {
+  try {
+    const { data } = await supabase.auth.getSession();
+    if (data?.session) {
+      console.log("Auth session ready:", data.session.user.email);
+    }
+  } catch (e) {
+    // 静默处理，非认证用户走访问码流程
+  }
 });
 </script>
 

@@ -7,6 +7,15 @@
   <style>
     html, body { margin: 0; padding: 0; background: #F5F0EB; }
   </style>
+  <script>
+    (function() {
+      var hash = window.location.hash;
+      if (hash && hash.indexOf('access_token') !== -1) {
+        localStorage.setItem('__sb_auth_hash', hash);
+        window.history.replaceState(null, '', '/');
+      }
+    })();
+  </script>
 </head>
 <body>
   <div id="app"></div>

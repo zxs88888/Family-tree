@@ -161,7 +161,8 @@ function setAsMe() {
 }
 
 function openEditor() {
-  uni.navigateTo({ url: "/pages/admin/admin" });
+  if (!member.value) return;
+  uni.navigateTo({ url: "/pages/admin/admin?memberId=" + member.value.id });
 }
 
 function goToMember(id) {

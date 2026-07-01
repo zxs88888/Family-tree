@@ -17,6 +17,9 @@
         <button class="btn-start" @click="showOnboarding = true">
           + 添加先祖
         </button>
+        <button class="btn-secondary" @click="goToAdmin">
+          📥 批量导入成员
+        </button>
       </template>
       <template v-else>
         <text class="empty-icon">🏛️</text>
@@ -48,7 +51,7 @@
         </view>
       </view>
       <view class="graph-area">
-        <FamilyGraph />
+        <FamilyGraph @node-click="onNodeClick" />
       </view>
       <MemberDrawer ref="drawerRef" />
     </view>
@@ -79,6 +82,19 @@ const VITE_FAMILY_ID = import.meta.env.VITE_FAMILY_ID;
 async function checkAdminSession() {
   const { data: { session } } = await supabase.auth.getSession();
   if (session?.user?.app_metadata?.provider !== 'email') return;
+
+  // 自动注册：如果该家族尚无管理员，当前用户自动成为超级管理员
+  const { count } = await supabase
+    .from('admins')
+    .select('*', { count: 'exact', head: true })
+    .eq('family_id', VITE_FAMILY_ID);
+
+  if (count === 0) {
+    await supabase.from('admins').insert({
+      user_id: session.user.id,
+      family_id: VITE_FAMILY_ID,
+    });
+  }
 
   userStore.isAdmin = true;
   userStore.accessCodeVerified = true;
@@ -133,7 +149,7 @@ function toggleFontSize() {
 function switchIdentity() {
   userStore.clearMyMemberId();
   familyStore.clearEventsCache();
-  showOnboarding.value = true;
+  window.location.reload();
 }
 
 function goToAdmin() {
@@ -178,6 +194,10 @@ function onOnboardingComplete() {
 
 function onOnboardingSkip() {
   showOnboarding.value = false;
+}
+
+function onNodeClick(member) {
+  drawerRef.value?.show(member);
 }
 
 onMounted(async () => {
@@ -269,6 +289,16 @@ onMounted(async () => {
   padding: 0 var(--spacing-xl);
   background: var(--primary);
   color: #fff;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-md);
+  margin-bottom: var(--spacing-sm);
+}
+.btn-secondary {
+  height: 48px;
+  padding: 0 var(--spacing-xl);
+  background: var(--bg-card);
+  color: var(--primary);
+  border: 1px solid var(--primary);
   border-radius: var(--radius-md);
   font-size: var(--font-size-md);
 }

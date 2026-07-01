@@ -5,6 +5,22 @@ export function buildGraphData(flatMembers, centerId, depth = 3) {
 
   const memberMap = new Map(flatMembers.map((m) => [m.id, m]));
 
+  // 预计算子嗣索引（O(n) 替代 O(n²)）
+  const childrenMap = new Map();
+  flatMembers.forEach((m) => {
+    if (m.father_id) {
+      const list = childrenMap.get(m.father_id) || [];
+      list.push(m.id);
+      childrenMap.set(m.father_id, list);
+    }
+    if (m.mother_id) {
+      const list = childrenMap.get(m.mother_id) || [];
+      list.push(m.id);
+      childrenMap.set(m.mother_id, list);
+    }
+  });
+  const getChildren = (id) => childrenMap.get(id) || [];
+
   // BFS 标记直系血脉（不受 depth 限制）
   const lineageNodes = new Set();
   if (centerId && memberMap.has(centerId)) {
@@ -19,10 +35,7 @@ export function buildGraphData(flatMembers, centerId, depth = 3) {
       if (!member) continue;
       if (member.father_id) queue.push(member.father_id);
       if (member.mother_id) queue.push(member.mother_id);
-      flatMembers.forEach((m) => {
-        if (m.father_id === currentId || m.mother_id === currentId)
-          queue.push(m.id);
-      });
+      getChildren(currentId).forEach((cid) => queue.push(cid));
     }
   }
 
@@ -58,9 +71,7 @@ export function buildGraphData(flatMembers, centerId, depth = 3) {
     if (member.father_id) neighborIds.add(member.father_id);
     if (member.mother_id) neighborIds.add(member.mother_id);
     if (member.spouse_id) neighborIds.add(member.spouse_id);
-    flatMembers.forEach((m) => {
-      if (m.father_id === id || m.mother_id === id) neighborIds.add(m.id);
-    });
+    getChildren(id).forEach((cid) => neighborIds.add(cid));
 
     neighborIds.forEach((neighborId) => {
       const key = [id, neighborId].sort().join("-");

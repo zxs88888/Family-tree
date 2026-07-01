@@ -1,3 +1,13 @@
+import { parseYearSort } from "./constants";
+
+function generateId() {
+  if (typeof crypto?.randomUUID === "function") return crypto.randomUUID();
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+  });
+}
+
 export function parseTimeline(timelineStr) {
   if (!timelineStr || timelineStr.trim() === "") return [];
 
@@ -23,23 +33,9 @@ export function parseTimeline(timelineStr) {
     const desc = (parts[1] || "").replace(/\\\|/g, "|");
     const location = (parts[2] || "").replace(/\\\|/g, "|");
 
-    let yearSort = null;
-    const eraMatch = yearDisplay.match(/(\d{4})\s*年代/);
-    if (eraMatch) {
-      yearSort = parseInt(eraMatch[1]) + 5;
-    } else {
-      const shortEraMatch = yearDisplay.match(/(\d{2})\s*年代/);
-      if (shortEraMatch) {
-        yearSort = 1900 + parseInt(shortEraMatch[1]) + 5;
-      } else {
-        const numMatch = yearDisplay.match(/(\d{4})/);
-        if (numMatch) yearSort = parseInt(numMatch[1]);
-      }
-    }
-
     events.push({
       year_display: yearDisplay,
-      year_sort: yearSort,
+      year_sort: parseYearSort(yearDisplay),
       event_type_label: label,
       event_title: title,
       description: desc,
@@ -104,7 +100,7 @@ export function resolveReferences(rows, nameToRow, familyId, existingMembers) {
   const events = [];
 
   for (const row of rows) {
-    const memberId = crypto.randomUUID();
+    const memberId = generateId();
 
     const resolveName = (name) => {
       if (!name) return null;

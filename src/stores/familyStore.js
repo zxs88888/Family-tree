@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { supabase } from "@/utils/supabase";
 import { buildGraphData } from "@/utils/graphHelper";
+import { parseYearSort } from "@/utils/constants";
 
 export const useFamilyStore = defineStore("family", {
   state: () => ({
@@ -12,18 +13,21 @@ export const useFamilyStore = defineStore("family", {
     eventsCache: {},
   }),
   actions: {
-    async withAutoRefresh(queryFn) {
+    async withAutoRefresh(queryFn, retries = 1) {
       try {
         return await queryFn();
       } catch (error) {
-        if (error?.message?.includes("JWT expired") || error?.status === 403) {
+        if (retries > 0 && (error?.message?.includes("JWT expired") || error?.status === 403)) {
           await supabase.auth.signInAnonymously();
-          return await queryFn();
+          return await this.withAutoRefresh(queryFn, retries - 1);
         }
         throw error;
       }
     },
     async loadAllMembers(familyId) {
+      if (!familyId) {
+        throw new Error("VITE_FAMILY_ID 未配置，请在 .env 中设置");
+      }
       this.loading = true;
       const { data, error } = await this.withAutoRefresh(async () => {
         return await supabase
@@ -142,22 +146,6 @@ export const useFamilyStore = defineStore("family", {
       if (this.allMembers.length === 0) this.isEmpty = true;
     },
     // ---- 事件 CRUD ----
-    parseYearSort(yearDisplay) {
-      let yearSort = null;
-      const eraMatch = yearDisplay?.match(/(\d{4})\s*年代/);
-      if (eraMatch) {
-        yearSort = parseInt(eraMatch[1]) + 5;
-      } else {
-        const shortEraMatch = yearDisplay?.match(/(\d{2})\s*年代/);
-        if (shortEraMatch) {
-          yearSort = 1900 + parseInt(shortEraMatch[1]) + 5;
-        } else {
-          const numMatch = yearDisplay?.match(/(\d{4})/);
-          if (numMatch) yearSort = parseInt(numMatch[1]);
-        }
-      }
-      return yearSort;
-    },
     async addEvent(memberId, eventData) {
       const payload = {
         member_id: memberId,
@@ -165,7 +153,7 @@ export const useFamilyStore = defineStore("family", {
         event_title: eventData.event_title,
         year_display: eventData.year_display,
         year_sort:
-          eventData.year_sort ?? this.parseYearSort(eventData.year_display),
+          eventData.year_sort ?? parseYearSort(eventData.year_display),
         location: eventData.location || null,
         description: eventData.description || null,
         sort_order: eventData.sort_order ?? 0,
@@ -200,7 +188,7 @@ export const useFamilyStore = defineStore("family", {
         event_title: eventData.event_title,
         year_display: eventData.year_display,
         year_sort:
-          eventData.year_sort ?? this.parseYearSort(eventData.year_display),
+          eventData.year_sort ?? parseYearSort(eventData.year_display),
         location: eventData.location ?? undefined,
         description: eventData.description ?? undefined,
         sort_order: eventData.sort_order ?? 0,
@@ -236,14 +224,18 @@ export const useFamilyStore = defineStore("family", {
         .eq("id", eventId);
       if (eventError) throw eventError;
 
-      // 4. 删除 Storage 文件（DB 删除成功后清理）
+      // 4. 删除 Storage 文件（DB 删除成功后清理，静默处理不影响主流程）
       if (mediaList?.length > 0) {
         const { extractStoragePath } = await import("@/utils/imageUtils");
         const paths = mediaList
           .map((m) => extractStoragePath(m.media_url))
           .filter(Boolean);
         if (paths.length > 0) {
-          await supabase.storage.from("family_photos").remove(paths);
+          try {
+            await supabase.storage.from("family_photos").remove(paths);
+          } catch (_) {
+            // Storage 删除失败不阻塞事务，文件可后续清理
+          }
         }
       }
 

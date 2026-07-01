@@ -31,8 +31,14 @@ export async function uploadImage(memberId, eventId, tempFilePath, fileName) {
   const path = generateStoragePath(memberId, eventId, fileName);
 
   // H5 上 tempFilePath 是 blob URL，需转为 Blob 再上传
-  const response = await fetch(tempFilePath);
-  const blob = await response.blob();
+  let blob;
+  try {
+    const response = await fetch(tempFilePath);
+    if (!response.ok) throw new Error("无法读取文件，响应状态: " + response.status);
+    blob = await response.blob();
+  } catch (e) {
+    throw new Error("图片读取失败: " + (e.message || "网络错误"));
+  }
 
   const { data, error } = await supabase.storage
     .from(PHOTO_BUCKET)
@@ -41,7 +47,7 @@ export async function uploadImage(memberId, eventId, tempFilePath, fileName) {
       upsert: false,
       contentType: blob.type || "image/jpeg",
     });
-  if (error) throw error;
+  if (error) throw new Error("上传失败: " + error.message);
 
   const {
     data: { publicUrl },

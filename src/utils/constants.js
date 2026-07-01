@@ -18,6 +18,19 @@ export const ICON_MAP = {
 
 export const ICON_DEFAULT = "📌";
 
+// 年份排序值解析规则（PRD 4.7）
+// 1930年代 → 1935, 80年代 → 1985, 约1940年 → 1940, 清光绪年间 → null
+export function parseYearSort(yearDisplay) {
+  if (!yearDisplay) return null;
+  const eraMatch = yearDisplay.match(/(\d{4})\s*年代/);
+  if (eraMatch) return parseInt(eraMatch[1]) + 5;
+  const shortEraMatch = yearDisplay.match(/(\d{2})\s*年代/);
+  if (shortEraMatch) return 1900 + parseInt(shortEraMatch[1]) + 5;
+  const numMatch = yearDisplay.match(/(\d{4})/);
+  if (numMatch) return parseInt(numMatch[1]);
+  return null;
+}
+
 export const TAG_QUICK_SELECT = [
   "出生",
   "求学",

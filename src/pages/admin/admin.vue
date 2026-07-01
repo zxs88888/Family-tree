@@ -519,6 +519,34 @@ async function startImport() {
       return;
     }
 
+    // 校验各字段合法性
+    const fieldErrors = [];
+    rows.forEach((row, i) => {
+      const line = i + 2;
+      if (!row.姓名 || !row.姓名.trim()) {
+        fieldErrors.push(`第 ${line} 行：姓名为空`);
+      }
+      const gender = row.性别 !== '' ? parseInt(row.性别) : null;
+      if (gender !== null && ![1, 2].includes(gender)) {
+        fieldErrors.push(`第 ${line} 行：性别值无效（应为 1、2 或空）`);
+      }
+      const birth = row.生年 ? parseInt(row.生年) : null;
+      const death = row.卒年 ? parseInt(row.卒年) : null;
+      if (birth && (birth < 1800 || birth > 2026)) {
+        fieldErrors.push(`第 ${line} 行：生年格式错误（范围 1800-2026）`);
+      }
+      if (death && (death < 1800 || death > 2026)) {
+        fieldErrors.push(`第 ${line} 行：卒年格式错误（范围 1800-2026）`);
+      }
+      if (birth && death && death < birth) {
+        fieldErrors.push(`第 ${line} 行：卒年不得早于生年`);
+      }
+    });
+    if (fieldErrors.length > 0) {
+      importResult.value = { success: false, errors: fieldErrors };
+      return;
+    }
+
     const nameToRow = new Map();
     rows.forEach((row, i) => {
       if (row.姓名) nameToRow.set(row.姓名, { ...row, _index: i });
@@ -610,6 +638,16 @@ async function startImport() {
     importing.value = false;
   }
 }
+
+onMounted(() => {
+  // 从 URL 参数中读取要编辑的成员 ID
+  const params = new URLSearchParams(window.location.search);
+  const memberId = params.get("memberId");
+  if (memberId) {
+    const member = familyStore.allMembers.find((m) => m.id === memberId);
+    if (member) editMember(member);
+  }
+});
 </script>
 
 <style>

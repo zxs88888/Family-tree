@@ -4,7 +4,10 @@
       <view class="modal-content">
         <!-- 模式：三步建谱向导 -->
         <template v-if="mode === 'wizard'">
-          <text class="modal-title">🏛️ 开启家族历史</text>
+          <view class="modal-header">
+            <text class="modal-title">🏛️ 开启家族历史</text>
+            <text class="modal-close" @click="skipWizard">✕</text>
+          </view>
           <text class="modal-subtitle">录入前三代祖先，建立家族骨架</text>
 
           <view class="step-indicator">
@@ -217,6 +220,11 @@ const wizard = ref({
   adminContact: "",
 });
 
+function skipWizard() {
+  uni.showToast({ title: "您可以稍后在管理页录入成员", icon: "none", duration: 2000 });
+  emit("skip");
+}
+
 async function nextWizardStep() {
   if (wizardStep.value < 3) {
     if (wizardStep.value === 1 && !wizard.value.self.name) {
@@ -409,6 +417,21 @@ function skipOnboarding() {
   font-size: 22px;
   font-weight: bold;
   text-align: center;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.modal-close {
+  font-size: 22px;
+  color: #999;
+  min-width: 48px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .modal-subtitle {
   font-size: 14px;

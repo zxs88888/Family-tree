@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import * as echarts from "echarts";
 import { useFamilyStore } from "@/stores/familyStore";
 import { useUserStore } from "@/stores/userStore";
@@ -29,6 +29,7 @@ const userStore = useUserStore();
 const graphRef = ref(null);
 const currentView = ref("lineage");
 const myMemberId = computed(() => userStore.myMemberId);
+const emit = defineEmits(["node-click"]);
 
 let chart = null;
 
@@ -36,6 +37,11 @@ function initChart() {
   if (!graphRef.value) return;
   chart = echarts.init(graphRef.value);
   renderChart();
+  chart.on("click", "series", (params) => {
+    if (params.data?.raw) {
+      emit("node-click", params.data.raw);
+    }
+  });
 }
 
 function renderChart() {
@@ -115,6 +121,40 @@ function renderChart() {
   };
 
   chart.setOption(option, true);
+  startBreathing();
+}
+
+let breatheId = null;
+let breatheVal = 10;
+let breatheDir = 1;
+let frameCount = 0;
+
+function startBreathing() {
+  stopBreathing();
+  if (!chart || !myMemberId.value) return;
+  function tick() {
+    frameCount++;
+    breatheVal += breatheDir * 1.5;
+    if (breatheVal > 22 || breatheVal < 6) breatheDir *= -1;
+    if (frameCount % 2 !== 0) { breatheId = requestAnimationFrame(tick); return; }
+    try {
+      const series = chart.getOption().series;
+      if (!series?.[0]?.data) return;
+      const data = series[0].data.map((d) => {
+        if (d.id === myMemberId.value) {
+          return { ...d, itemStyle: { ...d.itemStyle, shadowBlur: breatheVal, shadowColor: `rgba(201,169,110,${0.3 + breatheVal / 50})` } };
+        }
+        return d;
+      });
+      chart.setOption({ series: [{ data }] }, { replaceMerge: ['data'] });
+    } catch (_) {}
+    breatheId = requestAnimationFrame(tick);
+  }
+  tick();
+}
+
+function stopBreathing() {
+  if (breatheId) { cancelAnimationFrame(breatheId); breatheId = null; frameCount = 0; }
 }
 
 function switchView(view) {
@@ -139,6 +179,7 @@ watch(myMemberId, () => {
 
 onMounted(() => initChart());
 onUnmounted(() => {
+  stopBreathing();
   chart?.dispose();
 });
 </script>

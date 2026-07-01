@@ -2,5 +2,6 @@
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "headers": [
     { "source": "/(.*)", "headers": [{ "key": "X-Content-Type-Options", "value": "nosniff" }] }
-  ]
+  ],
+  "buildCommand": "UNI_INPUT_DIR=src UNI_PLATFORM=h5 UNI_OUTPUT_DIR=dist vite build"
 }

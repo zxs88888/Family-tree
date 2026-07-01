@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { supabase } from '@/utils/supabase'
 import { useUserStore } from '@/stores/userStore'
 
@@ -66,6 +66,16 @@ const VITE_FAMILY_ID = import.meta.env.VITE_FAMILY_ID
 onMounted(async () => {
   const { data } = await supabase.rpc('get_access_code_hint', { family_id: VITE_FAMILY_ID })
   hint.value = data || '****'
+
+  uni.onKeyboardHeightChange((res) => {
+    if (res.height > 0) {
+      uni.pageScrollTo({ selector: '.access-code-modal', offsetTop: -res.height + 60, duration: 200 })
+    }
+  })
+})
+
+onUnmounted(() => {
+  uni.offKeyboardHeightChange()
 })
 
 async function sendMagicLink() {
