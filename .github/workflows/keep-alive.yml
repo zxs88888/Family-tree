@@ -2,18 +2,18 @@ name: Keep Supabase Active
 
 on:
   schedule:
-    # 每天早上 10:00 执行（北京时间 UTC+8）
-    - cron: '0 2 * * *'
+    # 每 6 小时执行一次（北京时间 02:00 / 08:00 / 14:00 / 20:00）
+    - cron: '0 */6 * * *'
   workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Visit app to keep Supabase active
+      - name: Visit both to keep active
         run: |
-          curl -s -o /dev/null -w "%{http_code}" \
+          curl -s -o /dev/null --max-time 15 \
             "https://bbjzibxmxcmtrjbscilq.supabase.co/rest/v1/" \
-            -H "apikey: sb_publishable_ELMfIa0BNk7WxFOKQl1bXQ_ERjl3jSX"
-          curl -s -o /dev/null -w "%{http_code}" \
-            "https://family-tau-seven.vercel.app"
+            -H "apikey: sb_publishable_ELMfIa0BNk7WxFOKQl1bXQ_ERjl3jSX" || true
+          curl -s -o /dev/null --max-time 15 \
+            "https://family-tau-seven.vercel.app" || true
