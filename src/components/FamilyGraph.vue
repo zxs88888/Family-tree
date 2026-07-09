@@ -42,6 +42,7 @@
           class="node"
           :class="[
             n.isMe && 'is-me',
+            n.id === selectedId && 'selected',
             nodeState[n.id] && nodeState[n.id].hl && 'hl',
             nodeState[n.id] && nodeState[n.id].dim && 'dim',
           ]"
@@ -88,8 +89,12 @@
       <text class="zoom-btn" @click="zoomBy(1 / 1.2)">－</text>
       <text class="zoom-btn" @click="fitView">⤢</text>
     </view>
-    <view v-if="selectedId" class="sel-hint">
-      已选中「{{ selectedIdName }}」· 金色高亮其关系脉络，点空白处取消
+    <!-- 图例：把淡化规则写明白，避免误以为同父同母兄弟姐妹被淡 -->
+    <view class="legend">
+      <view v-if="selectedId" class="legend-sel">已选「{{ selectedIdName }}」· 点空白取消</view>
+      <view class="legend-row gold"><text>金色脉络 · 血缘（祖先／后代／配偶）</text></view>
+      <view class="legend-row norm"><text>常色 · 同父同母兄弟姐妹（始终可见）</text></view>
+      <view class="legend-row dim"><text>浅灰 · 其他亲属（淡出）</text></view>
     </view>
   </view>
 </template>
@@ -408,6 +413,18 @@ onUnmounted(() => {
   stroke: #d4af37 !important;
   stroke-width: 4 !important;
 }
+/* 当前选中节点：比血缘金环更亮、带光晕，明确"当前焦点是谁" */
+.node.selected circle {
+  stroke: #d4af37 !important;
+  stroke-width: 5 !important;
+}
+.node.selected {
+  filter: drop-shadow(0 0 7px rgba(212, 175, 55, 0.95));
+}
+.node.selected .node-name {
+  fill: #8b1a1a;
+  font-weight: 800;
+}
 .node.dim {
   opacity: 0.15;
 }
@@ -482,18 +499,52 @@ onUnmounted(() => {
 .zoom-btn:active {
   background: var(--gold-wash);
 }
-.sel-hint {
+/* 图例：把"谁淡、谁不淡"的规则写清楚，避免误读 */
+.legend {
   position: absolute;
   left: var(--spacing-md);
   bottom: var(--spacing-md);
   z-index: 10;
-  max-width: 60%;
-  padding: 6px 12px;
+  max-width: 64%;
+  padding: 10px 14px;
   border-radius: var(--radius-md);
-  background: rgba(252, 250, 245, 0.9);
+  background: rgba(252, 250, 245, 0.92);
   border: 1px solid var(--gold-line);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-family-title);
+  backdrop-filter: blur(8px);
+}
+.legend-sel {
+  font-size: 13px;
+  font-weight: 700;
+  color: #8b1a1a;
+  margin-bottom: 6px;
+}
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 12px;
   color: var(--ink-soft);
-  font-family: var(--font-family-title);
+  line-height: 1.9;
+}
+.legend-row::before {
+  content: "";
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+.legend-row.gold::before {
+  background: #d4af37;
+}
+.legend-row.norm::before {
+  background: #fbf8f1;
+  border: 2px solid #5b8c51;
+}
+.legend-row.dim::before {
+  background: #c9bba0;
+  opacity: 0.45;
 }
 </style>
