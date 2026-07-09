@@ -70,9 +70,13 @@ export function computeH(rels, id) {
       }
     });
   }
-  // 配偶
-  const sp = rels[id] && rels[id].spouse;
-  if (sp) H.add(sp);
+  // 配偶：选中者本人 + 所有血脉成员的配偶。
+  // 后代的垂落支连线端点含其配偶父母（如外甥女的生父=姐夫），
+  // 必须把这部分配偶也纳入 H，金线才能连续连到孙辈，避免"节点亮着却无金线"。
+  for (const cur of [...H]) {
+    const sp = rels[cur] && rels[cur].spouse;
+    if (sp) H.add(sp);
+  }
   return H;
 }
 
