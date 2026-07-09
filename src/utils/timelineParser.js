@@ -96,22 +96,24 @@ export function resolveReferences(rows, nameToRow, familyId, existingMembers) {
     existingMap.set(m.name, m.id);
   });
 
+  // 预先为每个姓名分配 id：保证文件内互相引用（如配偶）不依赖行顺序即可解析
+  const idMap = new Map();
+  rows.forEach((row) => {
+    if (row.姓名) {
+      idMap.set(row.姓名, existingMap.get(row.姓名) || generateId());
+    }
+  });
+
   const members = [];
   const events = [];
 
   for (const row of rows) {
-    const memberId = generateId();
+    const memberId = idMap.get(row.姓名);
 
     const resolveName = (name) => {
       if (!name) return null;
-      // 文件内优先
-      for (const [n, r] of nameToRow) {
-        if (n === name && r.姓名 === name) {
-          return (
-            members.find((m) => m.name === name)?.id || existingMap.get(name)
-          );
-        }
-      }
+      // 文件内姓名优先（不依赖行顺序）
+      if (idMap.has(name)) return idMap.get(name);
       // 数据库回退
       return existingMap.get(name) || null;
     };

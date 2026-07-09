@@ -324,7 +324,12 @@ function onSearchDebounced() {
 }
 
 function goBack() {
-  uni.navigateBack();
+  const pages = getCurrentPages();
+  if (pages.length > 1) {
+    uni.navigateBack();
+  } else {
+    uni.reLaunch({ url: "/pages/index/index" });
+  }
 }
 
 // ---- CRUD 表单 ----
@@ -474,7 +479,7 @@ async function chooseFile() {
   try {
     const XLSX = await import("xlsx");
     const data = await readFileAsArrayBuffer(
-      selectedFile.value.path || selectedFile.value.url,
+      selectedFile.value,
     );
     const workbook = XLSX.read(data, { type: "array" });
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -489,10 +494,31 @@ async function chooseFile() {
   }
 }
 
-function readFileAsArrayBuffer(path) {
+function readFileAsArrayBuffer(file) {
   return new Promise((resolve, reject) => {
+    // H5 浏览器环境：优先用原生 File / Blob 读取
+    if (typeof window !== "undefined") {
+      // 1) 原生 File 对象（uni-app H5 的 tempFile 通常附带）
+      if (file && file.file && typeof file.file.arrayBuffer === "function") {
+        file.file
+          .arrayBuffer()
+          .then((ab) => resolve(new Uint8Array(ab)))
+          .catch(reject);
+        return;
+      }
+      // 2) blob: 临时 URL
+      const url = file?.path || file?.url;
+      if (url && url.startsWith("blob:")) {
+        fetch(url)
+          .then((r) => r.arrayBuffer())
+          .then((ab) => resolve(new Uint8Array(ab)))
+          .catch(reject);
+        return;
+      }
+    }
+    // 小程序及其他平台
     uni.getFileSystemManager().readFile({
-      filePath: path,
+      filePath: file?.path || file?.url,
       success: (res) => resolve(res.data),
       fail: reject,
     });
@@ -506,7 +532,7 @@ async function startImport() {
   try {
     const XLSX = await import("xlsx");
     const data = await readFileAsArrayBuffer(
-      selectedFile.value.path || selectedFile.value.url,
+      selectedFile.value,
     );
     const workbook = XLSX.read(data, { type: "array" });
     const sheet = workbook.Sheets[workbook.SheetNames[0]];

@@ -5,333 +5,390 @@
         class="switch-option"
         :class="{ active: currentView === 'lineage', disabled: !myMemberId }"
         @click="switchView('lineage')"
-        >🧬 脉系视图</text
+        >🧬 脉系·以我为轴</text
       >
       <text
         class="switch-option"
         :class="{ active: currentView === 'global' }"
         @click="switchView('global')"
-        >🌳 全局视图</text
+        >🌳 全局·以先祖为根</text
       >
     </view>
-    <view ref="graphRef" id="family-graph-canvas" class="graph-container"></view>
+
+    <svg
+      ref="svgRef"
+      class="graph-svg"
+      :class="{ grabbing }"
+      @pointerdown="onPointerDown"
+      @pointermove="onPointerMove"
+      @pointerup="onPointerUp"
+      @pointerleave="onPointerUp"
+      @click="onBackgroundClick"
+    >
+      <g :transform="`translate(${transform.x} ${transform.y}) scale(${transform.k})`">
+        <!-- 连线：干线 trunk / 连续水平脊 spine / 垂落支 bus / 婚姻 marriage -->
+        <path
+          v-for="(e, i) in model.edges"
+          :key="'e' + i"
+          class="edge"
+          :class="[e.kind, edgeState[i].gold && 'hl', edgeState[i].dim && 'dim']"
+          :d="e.d"
+          fill="none"
+        />
+        <!-- 节点：色点 + 名卡 + 称谓 -->
+        <g
+          v-for="n in model.nodes"
+          :key="'n' + n.id"
+          class="node"
+          :class="[
+            n.isMe && 'is-me',
+            nodeState[n.id] && nodeState[n.id].hl && 'hl',
+            nodeState[n.id] && nodeState[n.id].dim && 'dim',
+          ]"
+          @click.stop="onNodeClick(n.id)"
+        >
+          <circle
+            :cx="n.x"
+            :cy="n.y"
+            :r="NODE_R"
+            :fill="nodeColor(n)"
+            :stroke="n.isMe ? '#D4AF37' : n.isAlive ? '#5b8c51' : '#b7ad97'"
+            :stroke-width="n.isMe ? 4 : 2"
+            :stroke-dasharray="n.isAlive ? 'none' : '4 3'"
+          />
+          <text
+            :x="n.x"
+            :y="n.y + 6"
+            text-anchor="middle"
+            class="node-initial"
+            >{{ n.name.slice(0, 1) }}</text
+          >
+          <text
+            :x="n.x"
+            :y="n.y + NODE_R + 24"
+            text-anchor="middle"
+            class="node-name"
+            >{{ n.name }}</text
+          >
+          <text
+            :x="n.x"
+            :y="n.y + NODE_R + 44"
+            text-anchor="middle"
+            class="node-label"
+            >{{ n.label }}</text
+          >
+        </g>
+      </g>
+    </svg>
+
+    <!-- 轻量缩放工具条 -->
+    <view class="zoom-bar">
+      <text class="zoom-btn" @click="zoomBy(1.2)">＋</text>
+      <text class="zoom-btn" @click="zoomBy(1 / 1.2)">－</text>
+      <text class="zoom-btn" @click="fitView">⤢</text>
+    </view>
+    <view v-if="selectedId" class="sel-hint">
+      已选中「{{ selectedIdName }}」· 金色高亮其关系脉络，点空白处取消
+    </view>
   </view>
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onMounted, onUnmounted, watch } from "vue";
-import * as echarts from "echarts";
+import { ref, reactive, computed, nextTick, onMounted, onUnmounted, watch } from "vue";
 import { useFamilyStore } from "@/stores/familyStore";
 import { useUserStore } from "@/stores/userStore";
+import {
+  buildElbowGraph,
+  computeH,
+  computeVisible,
+  NODE_R,
+} from "@/utils/elbowGraph";
 
 const familyStore = useFamilyStore();
 const userStore = useUserStore();
-const graphRef = ref(null);
-const currentView = ref("lineage");
+const svgRef = ref(null);
+const currentView = ref(userStore.myMemberId ? "lineage" : "global");
 const myMemberId = computed(() => userStore.myMemberId);
+const selectedId = ref(null);
 const emit = defineEmits(["node-click"]);
 
-let chart = null;
-let initRetries = 0;
+const selectedIdName = computed(() => {
+  const n = familyStore.allMembers.find((m) => m.id === selectedId.value);
+  return n ? n.name : "";
+});
 
-function getChartDom() {
-  // H5 下直接用真实 DOM（getElementById 拿到的才是真正可测量尺寸的 div），
-  // 避免 uni-app 把 <view> 的 ref 解析成组件实例代理导致 ECharts 按 0×0 初始化
-  if (typeof document !== "undefined") {
-    const byId = document.getElementById("family-graph-canvas");
-    if (byId) return byId;
-  }
-  return graphRef.value?.$el || graphRef.value || null;
-}
+// ── 图模型：随 graphData / 视图 / 我 变化重算 ──
+const model = computed(() =>
+  buildElbowGraph(familyStore.graphData, familyStore.allMembers, {
+    isLineage: currentView.value === "lineage",
+    myMemberId: myMemberId.value,
+  })
+);
 
-function initChart() {
-  const el = getChartDom();
-  if (!el) {
-    // DOM 尚未就绪，下一帧重试（带上限，避免永久空转）
-    if (initRetries < 60) {
-      initRetries++;
-      requestAnimationFrame(() => initChart());
-    }
-    return;
-  }
-  // 容器尚未完成布局（clientHeight 为 0）时，延迟到下一帧再初始化。
-  // 但最多重试约 1s（60 帧），超时则直接按当前尺寸初始化——
-  // 最坏退化为旧版"节点塌缩在左上角"（至少可见），绝不再因永久重试导致空白画布。
-  if ((!el.clientWidth || !el.clientHeight) && initRetries < 60) {
-    initRetries++;
-    requestAnimationFrame(() => initChart());
-    return;
-  }
-  try {
-    if (chart) {
-      chart.dispose();
-      chart = null;
-    }
-    chart = echarts.init(el);
-    // 调试钩子：便于 headless 测试读取真实 option（生产环境无害）
-    if (typeof window !== "undefined") window.__familyChart = chart;
-    renderChart();
-    chart.on("click", "series", (params) => {
-      if (params.data?.raw) {
-        emit("node-click", params.data.raw);
-      }
-    });
-  } catch (err) {
-    console.error("[FamilyGraph] init/render failed:", err);
-  }
-  // 初始挂载时容器可能尚未完成布局（0 尺寸），下一帧再 resize 校正，
-  // 否则力导布局会按 0×0 初始化、节点全塌缩到左上角
-  nextTick(() => {
-    requestAnimationFrame(() => chart?.resize());
-  });
-}
-
-function handleResize() {
-  chart?.resize();
-}
-
-function renderChart() {
-  if (!chart || !familyStore.graphData.nodes?.length) return;
-
-  const graphData = familyStore.graphData;
-  const isLargeFont = userStore.fontSizePreference === 20;
-  const isLineageView = currentView.value === "lineage";
-
-  // 关系副标：相对「我」的称谓（仅在脉系视图有意义）
-  const relLabel = (node) => {
-    if (node.category === "center") return "我";
-    if (!isLineageView)
-      return node.category === "female" ? "女" : node.category === "male" ? "男" : "族亲";
-    const me = familyStore.allMembers.find((m) => m.id === myMemberId.value);
-    if (!me) return node.category === "female" ? "女" : "男";
-    if (node.raw?.father_id === me.id || node.raw?.mother_id === me.id) return "子女";
-    if (me.father_id === node.id || me.mother_id === node.id) return "父母";
-    if (node.raw?.spouse_id === me.id) return "配偶";
-    if (node.raw?.father_id === me.father_id && me.father_id) return "兄弟姐妹";
-    return node.category === "female" ? "女" : "男";
-  };
-
-  const coloredLinks = (graphData.links || []).map((link) => {
-    // 三种连线：金线血脉 / 血缘（父母子女）/ 姻缘（夫妻）
-    const isSpouse = link.kind === "spouse";
-    const gold = link.isDirectLine;
-    // 金色只留给直系血脉；夫妻线用柔和赭灰虚线，不与金线争夺视觉焦点
-    const color = gold ? "#D4AF37" : isSpouse ? "#B7A98C" : "#C9BBA0";
-    const width = gold ? 4 : isSpouse ? 2 : 1.6;
-    return {
-      ...link,
-      symbol: link.showArrow ? ["none", "arrow"] : ["none", "none"],
-      lineStyle: {
-        color,
-        width,
-        type: isSpouse && !gold ? "dashed" : "solid",
-        opacity: gold ? 1 : 0.85,
-        curveness: isSpouse ? 0.18 : 0,
-        shadowBlur: gold ? 14 : 0,
-        shadowColor: gold ? "rgba(212,175,55,0.7)" : "transparent",
-        cap: "round",
-      },
+// ── 高亮判据（纯函数）──
+const H = computed(() =>
+  selectedId.value ? computeH(model.value.rels, selectedId.value) : null
+);
+const V = computed(() =>
+  selectedId.value ? computeVisible(model.value.rels, selectedId.value) : null
+);
+const edgeState = computed(() =>
+  model.value.edges.map((e) => {
+    const gold = H.value ? e.nodes.every((n) => H.value.has(n)) : false;
+    const dim = !!V.value && !e.nodes.every((n) => V.value.has(n));
+    return { gold, dim };
+  })
+);
+const nodeState = computed(() => {
+  const m = {};
+  model.value.nodes.forEach((n) => {
+    m[n.id] = {
+      hl: !!H.value && H.value.has(n.id),
+      dim: !!V.value && !V.value.has(n.id),
     };
   });
+  return m;
+});
 
-  const coloredNodes = (graphData.nodes || []).map((node) => {
-    const isCenter = node.category === "center";
-    const size = isCenter ? (isLargeFont ? 70 : 64) : isLargeFont ? 48 : 42;
-    return {
-      ...node,
-      symbolSize: size,
-      // 节点本体=色点（头像意象）；雅致名卡由 label.rich 绘制在下方
-      itemStyle: {
-        // 节点收敛到中国传统色：男=黛、女=赭、旁系=墨灰；金色只留给中心与血脉
-        color:
-          node.category === "male"
-            ? "#3A4A52"
-            : node.category === "female"
-              ? "#9C6B4A"
-              : node.category === "member"
-                ? "#8A8275"
-                : "#8B1A1A",
-        borderColor: isCenter ? "#D4AF37" : node.isAlive ? "#5b8c51" : "#b7ad97",
-        borderType: isCenter ? "solid" : node.isAlive ? "solid" : "dashed",
-        borderWidth: isCenter ? 4 : 2,
-        shadowBlur: isCenter ? 22 : 6,
-        shadowColor: isCenter ? "rgba(212,175,55,0.55)" : "rgba(74,56,30,0.18)",
-      },
-    };
-  });
+const nodeColor = (n) =>
+  n.category === "male"
+    ? "#3A4A52"
+    : n.category === "female"
+      ? "#9C6B4A"
+      : "#8A8275";
 
-  const option = {
-    series: [
-      {
-        type: "graph",
-        // 确定性层级布局：节点坐标由 graphHelper 计算（脉系以"我"居中、全局以先祖为根），
-        // 不再用力导向，保证脉络清晰、刷新不漂移（UIUX §9.4）。
-        layout: "none",
-        roam: true,
-        draggable: true,
-        data: coloredNodes,
-        links: coloredLinks,
-        edgeSymbol: ["none", "none"],
-        categories: [
-          { name: "center", itemStyle: { color: "#8B1A1A" } },
-          { name: "male", itemStyle: { color: "#3A4A52" } },
-          { name: "female", itemStyle: { color: "#9C6B4A" } },
-          { name: "member", itemStyle: { color: "#8A8275" } },
-        ],
-        // 名卡：色点下方一块温润纸卡，宋体姓名 + 关系副标 + 金边
-        label: {
-          show: true,
-          position: "bottom",
-          distance: 10,
-          formatter: (params) => {
-            const name = params.data.name || "";
-            const sub = relLabel(params.data);
-            const wrapName =
-              name.length > 4 && isLargeFont ? name.slice(0, 4) + "\n" + name.slice(4) : name;
-            return `{name|${wrapName}}\n{sub|${sub}}`;
-          },
-          rich: {
-            name: {
-              fontFamily: "Noto Serif SC, Source Han Serif SC, serif",
-              fontSize: isLargeFont ? 17 : 15,
-              fontWeight: "bold",
-              color: "#2b2622",
-              backgroundColor: "rgba(252,250,245,0.96)",
-              padding: [6, 11, 2, 11],
-              borderRadius: 9,
-              align: "center",
-              lineHeight: 21,
-            },
-            sub: {
-              fontFamily: "Noto Serif SC, Source Han Serif SC, serif",
-              fontSize: 11,
-              color: "#6F6657",
-              backgroundColor: "rgba(252,250,245,0.96)",
-              padding: [0, 11, 6, 11],
-              borderRadius: 9,
-              align: "center",
-            },
-          },
-        },
-        lineStyle: { color: "#C9BBA0", width: 1.6, cap: "round" },
-        emphasis: {
-          focus: "adjacency",
-          lineStyle: { width: 4, color: "#D4AF37" },
-          itemStyle: { shadowBlur: 18 },
-          label: { rich: { name: { color: "#8b1a1a" } } },
-        },
-      },
-    ],
-  };
+// ── 平移 / 缩放 ──
+const transform = reactive({ x: 0, y: 0, k: 1 });
+const grabbing = ref(false);
+let needsFit = true;
+let dragStart = null;
 
-  // 关键：先 resize 到当前正确尺寸，再 setOption。
-  // 若 init 时容器尺寸未就绪（0 高度），这句 resize 会把画布校正为真实尺寸，
-  // 使下面的力导布局按正确高度计算，避免节点塌缩到顶部/左上角。
-  chart.resize();
-  chart.setOption(option, true);
-  // 数据到达时容器可能已完成布局，补一次 resize 校正画布尺寸
-  requestAnimationFrame(() => chart?.resize());
-  startBreathing();
+function svgPoint(e) {
+  const rect = svgRef.value.getBoundingClientRect();
+  return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+}
+function fitView() {
+  const svg = svgRef.value;
+  if (!svg) return;
+  const rect = svg.getBoundingClientRect();
+  const w = rect.width,
+    h = rect.height;
+  if (!w || !h) return;
+  const b = model.value.bounds;
+  const cw = b.maxX - b.minX,
+    ch = b.maxY - b.minY;
+  if (cw <= 0 || ch <= 0) return;
+  const k = Math.min(w / cw, h / ch) * 0.92;
+  transform.k = k;
+  transform.x = (w - cw * k) / 2 - b.minX * k;
+  transform.y = (h - ch * k) / 2 - b.minY * k;
+  needsFit = false;
+}
+function onPointerDown(e) {
+  grabbing.value = true;
+  const p = svgPoint(e);
+  dragStart = { x: p.x, y: p.y, tx: transform.x, ty: transform.y };
+  svgRef.value.setPointerCapture?.(e.pointerId);
+}
+function onPointerMove(e) {
+  if (!dragStart) return;
+  const p = svgPoint(e);
+  transform.x = dragStart.tx + (p.x - dragStart.x);
+  transform.y = dragStart.ty + (p.y - dragStart.y);
+}
+function onPointerUp(e) {
+  grabbing.value = false;
+  dragStart = null;
+  svgRef.value?.releasePointerCapture?.(e.pointerId);
+}
+function onWheel(e) {
+  e.preventDefault();
+  const p = svgPoint(e);
+  const factor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+  const newK = Math.min(4, Math.max(0.2, transform.k * factor));
+  const wx = (p.x - transform.x) / transform.k;
+  const wy = (p.y - transform.y) / transform.k;
+  transform.x = p.x - wx * newK;
+  transform.y = p.y - wy * newK;
+  transform.k = newK;
+}
+function zoomBy(f) {
+  const svg = svgRef.value;
+  if (!svg) return;
+  const rect = svg.getBoundingClientRect();
+  const cx = rect.width / 2,
+    cy = rect.height / 2;
+  const newK = Math.min(4, Math.max(0.2, transform.k * f));
+  const wx = (cx - transform.x) / transform.k;
+  const wy = (cy - transform.y) / transform.k;
+  transform.x = cx - wx * newK;
+  transform.y = cy - wy * newK;
+  transform.k = newK;
 }
 
-let breatheId = null;
-let breatheVal = 10;
-let breatheDir = 1;
-let frameCount = 0;
-
-// 缓存当前完整节点数据（含 x/y），呼吸动画每帧在其基础上只改"我"节点的光晕，
-// 避免反复调用 getOption（坏状态）与非法 replaceMerge（会让后续 setOption 被忽略）。
-let baseData = null;
-
-function startBreathing() {
-  stopBreathing();
-  if (!chart || !myMemberId.value) return;
-  // 尊重「减少动态」偏好：不启动常驻呼吸动画
-  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  baseData = chart.getOption().series?.[0]?.data || null;
-  if (!baseData?.length) return;
-  function tick() {
-    frameCount++;
-    breatheVal += breatheDir * 1.2;
-    // 收敛光晕强度（6–14），避免过强抢戏，让金线成为焦点
-    if (breatheVal > 14 || breatheVal < 6) breatheDir *= -1;
-    if (frameCount % 2 !== 0) { breatheId = requestAnimationFrame(tick); return; }
-    try {
-      const data = baseData.map((d) => {
-        if (d.id === myMemberId.value) {
-          return { ...d, itemStyle: { ...d.itemStyle, shadowBlur: breatheVal, shadowColor: `rgba(201,169,110,${0.18 + breatheVal / 80})` } };
-        }
-        return d;
-      });
-      // 关键：用普通 setOption（series 按 index 合并），data 含 x/y 故坐标不变；
-      // 绝不用 replaceMerge:['data']（'data' 非合法组件名），否则会令 chart 进入
-      // 坏状态，导致后续 setOption 被 ECharts 静默忽略（表现为视图切换无效）。
-      chart.setOption({ series: [{ data }] });
-    } catch (_) {}
-    breatheId = requestAnimationFrame(tick);
-  }
-  tick();
+// ── 交互 ──
+function onNodeClick(id) {
+  selectedId.value = id;
+  emit("node-click", id); // 打开成员详情抽屉（沿用旧交互）
 }
-
-function stopBreathing() {
-  if (breatheId) { cancelAnimationFrame(breatheId); breatheId = null; frameCount = 0; }
+function onBackgroundClick() {
+  selectedId.value = null;
 }
-
 function switchView(view) {
   if (view === "lineage" && !myMemberId.value) {
     uni.showToast({ title: "请先在家族中选择您自己", icon: "none" });
     return;
   }
+  if (currentView.value === view) return;
   currentView.value = view;
+  selectedId.value = null;
   const centerId = view === "lineage" ? myMemberId.value : undefined;
-  const depth =
-    view === "global" ? (familyStore.allMembers.length > 300 ? 3 : 5) : 3;
-  familyStore.buildGraph(centerId, depth);
-  renderChart();
+  familyStore.buildGraph(centerId, 50);
+  needsFit = true;
+  nextTick(() => requestAnimationFrame(fitView));
 }
 
-watch(myMemberId, () => {
-  if (myMemberId.value) {
-    familyStore.buildGraph(myMemberId.value, 3);
-    renderChart();
-  }
-});
+// 数据到达 / 视口变化 → 复位并适配（带尺寸就绪重试，避免 0 高度塌缩）
+function scheduleFit() {
+  needsFit = true;
+  let tries = 0;
+  const tryFit = () => {
+    const svg = svgRef.value;
+    if (svg && svg.getBoundingClientRect().width > 0) {
+      fitView();
+    } else if (tries++ < 60) {
+      requestAnimationFrame(tryFit);
+    }
+  };
+  nextTick(tryFit);
+}
 
-// 数据到达即重绘：buildGraph 会整体替换 graphData，此处必触发，
-// 覆盖"异步数据到达 / 回头用户初始值不触发 watch"等所有场景。
-// chart 未就绪则先 init（避免 renderChart 因 chart 为 null 直接返回）。
 watch(
   () => familyStore.graphData,
-  () => {
-    if (chart) renderChart();
-    else initChart();
-  }
+  () => scheduleFit()
 );
+watch(myMemberId, () => {
+  selectedId.value = null;
+  currentView.value = myMemberId.value ? "lineage" : "global";
+  familyStore.buildGraph(myMemberId.value, 50);
+  scheduleFit();
+});
 
+let ro = null;
 onMounted(() => {
-  initChart();
-  window.addEventListener("resize", handleResize);
+  svgRef.value.addEventListener("wheel", onWheel, { passive: false });
+  ro = new ResizeObserver(() => {
+    if (needsFit) fitView();
+  });
+  ro.observe(svgRef.value);
+  scheduleFit();
 });
 onUnmounted(() => {
-  window.removeEventListener("resize", handleResize);
-  stopBreathing();
-  chart?.dispose();
+  svgRef.value?.removeEventListener("wheel", onWheel);
+  ro?.disconnect();
 });
 </script>
 
 <style>
 .family-graph {
+  display: block;
   width: 100%;
   height: 100%;
   position: relative;
-  animation: fadeIn 0.3s ease;
 }
-.graph-container {
+.graph-svg {
+  display: block;
   width: 100%;
   height: 100%;
-  /* 透明，让宣纸底纹透出，图谱如绘于纸上 */
   background: transparent;
+  touch-action: none; /* 让指针拖拽/缩放手势不被浏览器默认滚动吞掉 */
+  cursor: grab;
 }
+.graph-svg.grabbing {
+  cursor: grabbing;
+}
+
+/* 连线 */
+.edge {
+  stroke: #c9bba0;
+  stroke-width: 1.6;
+  fill: none;
+  transition:
+    opacity 0.18s,
+    stroke 0.18s,
+    stroke-width 0.18s;
+}
+.edge.trunk {
+  stroke-width: 1.8;
+}
+.edge.marriage {
+  stroke: #b7a98c;
+  stroke-width: 1.8;
+}
+.edge.hl {
+  stroke: #d4af37 !important;
+  stroke-width: 3.6 !important;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.8));
+}
+.edge.dim {
+  opacity: 0.12;
+}
+
+/* 节点 */
+.node {
+  cursor: pointer;
+  transition: opacity 0.18s;
+}
+.node:hover circle {
+  stroke: #8b1a1a;
+}
+.node .node-initial {
+  font-size: 15px;
+  font-weight: bold;
+  fill: #fff;
+  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  pointer-events: none;
+}
+.node .node-name {
+  font-size: 15px;
+  font-weight: bold;
+  fill: #2b2622;
+  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  pointer-events: none;
+}
+.node .node-label {
+  font-size: 13px;
+  fill: #6f6657;
+  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  pointer-events: none;
+}
+.node.is-me circle {
+  animation: mePulse 2.4s ease-in-out infinite;
+}
+@keyframes mePulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 14px rgba(212, 175, 55, 0.9));
+  }
+}
+.node.hl circle {
+  stroke: #d4af37 !important;
+  stroke-width: 4 !important;
+}
+.node.dim {
+  opacity: 0.15;
+}
+@media (prefers-reduced-motion: reduce) {
+  .node.is-me circle {
+    animation: none;
+  }
+}
+
+/* 视图切换 */
 .view-switcher {
   position: absolute;
   top: var(--spacing-md);
@@ -339,7 +396,6 @@ onUnmounted(() => {
   transform: translateX(-50%);
   z-index: 10;
   display: flex;
-  gap: 0;
   padding: 4px;
   border-radius: var(--radius-full);
   background: rgba(252, 250, 245, 0.9);
@@ -368,5 +424,47 @@ onUnmounted(() => {
 }
 .switch-option.disabled {
   opacity: 0.45;
+}
+
+/* 缩放工具条 */
+.zoom-bar {
+  position: absolute;
+  right: var(--spacing-md);
+  bottom: var(--spacing-md);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.zoom-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(252, 250, 245, 0.92);
+  border: 1px solid var(--gold-line);
+  box-shadow: var(--shadow-sm);
+  font-size: 20px;
+  color: var(--ink);
+  font-family: var(--font-family-title);
+}
+.zoom-btn:active {
+  background: var(--gold-wash);
+}
+.sel-hint {
+  position: absolute;
+  left: var(--spacing-md);
+  bottom: var(--spacing-md);
+  z-index: 10;
+  max-width: 60%;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  background: rgba(252, 250, 245, 0.9);
+  border: 1px solid var(--gold-line);
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-family: var(--font-family-title);
 }
 </style>

@@ -144,8 +144,10 @@ async function loadAllMembers() {
       // 已有成员：检查是否需要"选我"
       if (!userStore.myMemberId) {
         showOnboarding.value = true;
+        // 未设「我」也展示全局视图（第N代），避免空白让人误以为"没改"
+        familyStore.buildGraph(undefined, 50);
       } else {
-        familyStore.buildGraph(userStore.myMemberId, 3);
+        familyStore.buildGraph(userStore.myMemberId, 50);
       }
     }
   } catch (e) {
@@ -208,7 +210,7 @@ function copyContact() {
 function onOnboardingComplete() {
   showOnboarding.value = false;
   if (userStore.myMemberId) {
-    familyStore.buildGraph(userStore.myMemberId, 3);
+    familyStore.buildGraph(userStore.myMemberId, 50);
   }
 }
 
@@ -216,8 +218,9 @@ function onOnboardingSkip() {
   showOnboarding.value = false;
 }
 
-function onNodeClick(member) {
-  drawerRef.value?.show(member);
+function onNodeClick(memberId) {
+  const full = familyStore.allMembers.find((m) => m.id === memberId);
+  if (full) drawerRef.value?.show(full);
 }
 
 function showAccessModal() {

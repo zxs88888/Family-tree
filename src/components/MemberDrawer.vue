@@ -153,7 +153,7 @@ function setAsMe() {
   if (!member.value) return;
   userStore.setMyMemberId(member.value.id);
   familyStore.clearEventsCache();
-  familyStore.buildGraph(member.value.id, 3);
+  familyStore.buildGraph(member.value.id, 50);
   uni.showToast({
     title: `已设为"${member.value.name}"的身份`,
     icon: "success",
