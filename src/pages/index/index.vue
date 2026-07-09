@@ -31,6 +31,9 @@
           adminContact
         }}</text>
         <text v-else class="contact-info">请联系家族管理员添加成员。</text>
+        <text class="contact-info" @click="showAccessModal"
+          >管理员？点此登录 →</text
+        >
       </template>
     </view>
     <view v-else class="main-content">
@@ -51,7 +54,24 @@
         </view>
       </view>
       <view class="graph-area">
+        <text v-if="familyName" class="graph-watermark">{{ familyName }}</text>
         <FamilyGraph @node-click="onNodeClick" />
+      </view>
+      <!-- UIUX §2.4：成员 < 4 人时显示引导提示 -->
+      <view
+        v-if="familyStore.allMembers.length < 4"
+        class="few-members-tip"
+      >
+        <text class="few-members-text"
+          >家族成员较少，继续添加以展现更完整的家族脉络</text
+        >
+        <button
+          v-if="userStore.isAdmin"
+          class="btn-add-member"
+          @click="goToAdmin"
+        >
+          + 添加成员
+        </button>
       </view>
       <MemberDrawer ref="drawerRef" />
     </view>
@@ -200,6 +220,10 @@ function onNodeClick(member) {
   drawerRef.value?.show(member);
 }
 
+function showAccessModal() {
+  accessCodeVerified.value = false;
+}
+
 onMounted(async () => {
   await checkAdminSession();
   if (accessCodeVerified.value && !familyStore.loaded) {
@@ -219,15 +243,18 @@ onMounted(async () => {
   align-items: center;
   height: 56px;
   padding: 0 var(--spacing-lg);
-  background: var(--primary);
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(139, 26, 26, 0.3);
+  background: linear-gradient(180deg, var(--primary) 0%, var(--primary-deep) 100%);
+  color: #f6ecd6;
+  box-shadow: 0 2px 12px rgba(110, 20, 20, 0.35);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.35);
 }
 .family-name {
   font-size: var(--font-size-lg);
   font-weight: bold;
   font-family: var(--font-family-title);
-  letter-spacing: 2px;
+  letter-spacing: 3px;
+  color: #f7eed8;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 .nav-actions {
   display: flex;
@@ -235,26 +262,72 @@ onMounted(async () => {
 }
 .action-icon {
   font-size: var(--font-size-lg);
-  min-width: 48px;
-  min-height: 48px;
+  min-width: 44px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-sm);
+  color: #f6ecd6;
   transition: background var(--transition-fast);
 }
 .action-icon:active {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.16);
 }
 .action-icon.active {
-  color: var(--accent-gold);
+  color: var(--gold-bright);
   font-weight: bold;
-  border-bottom: 2px solid var(--accent-gold);
+  border-bottom: 2px solid var(--gold-bright);
 }
 .graph-area {
   width: 100%;
   height: calc(100vh - 56px);
+  position: relative;
   animation: fadeIn 0.3s ease;
+  overflow: hidden;
+}
+/* 家族姓氏水印：图谱如绘于纸上的家谱 */
+.graph-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-family-title);
+  font-size: 180px;
+  font-weight: bold;
+  letter-spacing: 20px;
+  color: rgba(139, 26, 26, 0.03);
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* 少成员引导（UIUX §2.4） */
+.few-members-tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--gold-wash);
+  border-top: 1px solid var(--gold-line);
+}
+.few-members-text {
+  font-size: var(--font-size-sm);
+  color: var(--ink-soft);
+  font-family: var(--font-family-title);
+  letter-spacing: 0.5px;
+}
+.btn-add-member {
+  height: 38px;
+  padding: 0 var(--spacing-lg);
+  background: var(--primary);
+  color: #f6ecd6;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  box-shadow: 0 2px 8px rgba(139, 26, 26, 0.2);
 }
 
 /* 空状态 */
@@ -268,39 +341,45 @@ onMounted(async () => {
   animation: fadeInUp 0.4s ease;
 }
 .empty-icon {
-  font-size: 64px;
+  font-size: 60px;
   margin-bottom: var(--spacing-md);
+  filter: sepia(0.3) saturate(0.8);
 }
 .empty-title {
   font-size: var(--font-size-xl);
   font-weight: bold;
   font-family: var(--font-family-title);
+  letter-spacing: 2px;
+  color: var(--ink);
   margin-bottom: var(--spacing-sm);
 }
 .empty-desc {
   font-size: var(--font-size-md);
-  color: var(--text-secondary);
+  color: var(--ink-soft);
   text-align: center;
   margin-bottom: var(--spacing-lg);
-  line-height: 1.6;
+  line-height: 1.7;
 }
 .btn-start {
   height: 48px;
   padding: 0 var(--spacing-xl);
   background: var(--primary);
-  color: #fff;
-  border-radius: var(--radius-md);
+  color: #f6ecd6;
+  border-radius: var(--radius-lg);
   font-size: var(--font-size-md);
+  letter-spacing: 1px;
   margin-bottom: var(--spacing-sm);
+  box-shadow: 0 2px 10px rgba(139, 26, 26, 0.2);
 }
 .btn-secondary {
   height: 48px;
   padding: 0 var(--spacing-xl);
   background: var(--bg-card);
   color: var(--primary);
-  border: 1px solid var(--primary);
+  border: 1px solid var(--gold);
   border-radius: var(--radius-md);
   font-size: var(--font-size-md);
+  letter-spacing: 1px;
 }
 .contact-info {
   font-size: var(--font-size-base);

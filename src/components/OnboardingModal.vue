@@ -397,7 +397,7 @@ function skipOnboarding() {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(43, 38, 34, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -405,18 +405,23 @@ function skipOnboarding() {
   padding: 20px;
 }
 .modal-content {
-  background: #fff;
-  border-radius: 24px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
   padding: 32px 24px;
   width: 100%;
   max-width: 400px;
   max-height: 85vh;
   overflow-y: auto;
+  border: 1px solid var(--gold-line);
+  box-shadow: var(--shadow-lg);
 }
 .modal-title {
-  font-size: 22px;
+  font-size: 23px;
   font-weight: bold;
   text-align: center;
+  font-family: var(--font-family-title);
+  letter-spacing: 2px;
+  color: var(--ink);
 }
 .modal-header {
   display: flex;
@@ -426,7 +431,7 @@ function skipOnboarding() {
 }
 .modal-close {
   font-size: 22px;
-  color: #999;
+  color: var(--ink-faint);
   min-width: 48px;
   min-height: 48px;
   display: flex;
@@ -435,9 +440,11 @@ function skipOnboarding() {
 }
 .modal-subtitle {
   font-size: 14px;
-  color: #6b6b6b;
+  color: var(--ink-soft);
   text-align: center;
   margin: 8px 0 20px;
+  font-family: var(--font-family-title);
+  letter-spacing: 0.5px;
 }
 
 /* 向导 */
@@ -452,34 +459,40 @@ function skipOnboarding() {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #eee;
-  color: #999;
+  background: var(--bg-sunken);
+  color: var(--ink-faint);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 14px;
   font-weight: bold;
+  border: 1px solid var(--gold-line);
 }
 .step-dot.active {
-  background: #8b1a1a;
-  color: #fff;
+  background: var(--primary);
+  color: #f6ecd6;
+  border-color: var(--primary);
 }
 .step-dot.done {
-  background: #27ae60;
+  background: var(--gold);
   color: #fff;
+  border-color: var(--gold);
 }
 .step-line {
   width: 40px;
   height: 2px;
-  background: #eee;
+  background: var(--gold-line);
 }
 .step-line.done {
-  background: #27ae60;
+  background: var(--gold);
 }
 .step-title {
   font-size: 16px;
   font-weight: bold;
   margin-bottom: 16px;
+  font-family: var(--font-family-title);
+  letter-spacing: 1px;
+  color: var(--ink);
 }
 .wizard-actions {
   display: flex;
@@ -489,19 +502,22 @@ function skipOnboarding() {
 .btn-next {
   flex: 1;
   height: 48px;
-  background: #8b1a1a;
-  color: #fff;
-  border-radius: 12px;
+  background: var(--primary);
+  color: #f6ecd6;
+  border-radius: var(--radius-lg);
+  letter-spacing: 1px;
+  box-shadow: 0 2px 10px rgba(139, 26, 26, 0.2);
 }
 
 /* 搜索 */
 .search-box {
   display: flex;
   align-items: center;
-  border: 1px solid #ddd;
-  border-radius: 12px;
+  border: 1px solid var(--gold-line);
+  border-radius: var(--radius-md);
   padding: 0 12px;
   margin-bottom: 16px;
+  background: var(--bg-sunken);
 }
 .search-icon {
   font-size: 18px;
@@ -519,37 +535,42 @@ function skipOnboarding() {
   align-items: center;
   gap: 12px;
   padding: 12px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   margin-bottom: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--gold-line);
 }
 .search-item.selected {
-  background: #fff8f0;
-  border: 1px solid #c9a96e;
+  background: var(--gold-wash);
+  border: 1px solid var(--gold);
 }
 .search-item-name {
   font-size: 16px;
   font-weight: 500;
+  font-family: var(--font-family-title);
+  color: var(--ink);
 }
 .search-item-parent {
   font-size: 13px;
-  color: #6b6b6b;
+  color: var(--ink-soft);
 }
 .search-empty {
   text-align: center;
-  color: #999;
+  color: var(--ink-faint);
   padding: 20px 0;
 }
 .avatar-placeholder-sm {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #8b1a1a;
-  color: #fff;
+  background: linear-gradient(145deg, var(--primary) 0%, var(--primary-deep) 100%);
+  color: #f6ecd6;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
   font-weight: bold;
+  font-family: var(--font-family-title);
 }
 .modal-footer {
   display: flex;
@@ -558,16 +579,28 @@ function skipOnboarding() {
 .btn-skip {
   flex: 1;
   height: 48px;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--gold-line);
+  border-radius: var(--radius-md);
+  color: var(--ink-soft);
+}
+.btn-cancel {
+  flex: 1;
+  height: 48px;
+  background: var(--bg-sunken);
+  border: 1px solid var(--gold-line);
+  border-radius: var(--radius-md);
+  color: var(--ink-soft);
+  letter-spacing: 1px;
 }
 .btn-confirm {
   flex: 1;
   height: 48px;
-  background: #8b1a1a;
-  color: #fff;
-  border-radius: 12px;
+  background: var(--primary);
+  color: #f6ecd6;
+  border-radius: var(--radius-lg);
+  letter-spacing: 1px;
+  box-shadow: 0 2px 10px rgba(139, 26, 26, 0.2);
 }
 .btn-confirm[disabled] {
   opacity: 0.5;
@@ -582,16 +615,19 @@ function skipOnboarding() {
 }
 .form-label {
   font-size: 14px;
-  color: #6b6b6b;
+  color: var(--ink-soft);
   margin-bottom: 4px;
   display: block;
+  font-family: var(--font-family-title);
+  letter-spacing: 0.5px;
 }
 .form-input {
   width: 100%;
   height: 44px;
-  border: 1px solid #ddd;
-  border-radius: 12px;
+  border: 1px solid var(--gold-line);
+  border-radius: var(--radius-md);
   padding: 0 12px;
+  background: var(--bg-sunken);
 }
 .radio-group {
   display: flex;
@@ -599,8 +635,8 @@ function skipOnboarding() {
 }
 .radio {
   padding: 8px 20px;
-  border: 1px solid #ddd;
-  border-radius: 12px;
+  border: 1px solid var(--gold-line);
+  border-radius: var(--radius-md);
   font-size: 14px;
   min-width: 48px;
   min-height: 48px;
@@ -609,22 +645,24 @@ function skipOnboarding() {
   justify-content: center;
 }
 .radio.active {
-  border-color: #8b1a1a;
-  background: #fff5f5;
-  color: #8b1a1a;
+  border-color: var(--primary);
+  background: var(--primary-wash);
+  color: var(--primary);
+  font-weight: bold;
 }
 .toggle-switch {
   display: inline-flex;
   align-items: center;
   padding: 8px 16px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   font-size: 14px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--gold-line);
   min-width: 48px;
   min-height: 48px;
 }
 .toggle-switch.on {
-  border-color: #27ae60;
-  background: #f0fff4;
+  border-color: var(--success);
+  background: rgba(91, 140, 81, 0.12);
+  color: var(--success);
 }
 </style>

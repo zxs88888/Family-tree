@@ -9,10 +9,13 @@
             <text class="form-label">邮箱</text>
             <input v-model="email" placeholder="输入管理员邮箱" type="email" class="form-input" />
           </view>
-          <button class="btn-verify" :disabled="!email || sending" @click="sendMagicLink">
-            {{ sending ? '发送中...' : '发送登录链接' }}
+          <view class="form-group">
+            <text class="form-label">密码</text>
+            <input v-model="password" placeholder="输入密码" type="password" class="form-input" />
+          </view>
+          <button class="btn-verify" :disabled="!email || !password || sending" @click="loginWithPassword">
+            {{ sending ? '登录中...' : '登录' }}
           </button>
-          <text v-if="linkSent" class="success-text">✅ 登录链接已发送，请查收邮件</text>
           <text v-if="errorMsg" class="error-text">{{ errorMsg }}</text>
         </view>
 
@@ -59,8 +62,8 @@ const errorCount = ref(0)
 const locked = ref(false)
 const isAdminMode = ref(false)
 const email = ref('')
+const password = ref('')
 const sending = ref(false)
-const linkSent = ref(false)
 const VITE_FAMILY_ID = import.meta.env.VITE_FAMILY_ID
 
 onMounted(async () => {
@@ -78,15 +81,18 @@ onUnmounted(() => {
   uni.offKeyboardHeightChange()
 })
 
-async function sendMagicLink() {
-  if (!email.value) return
+async function loginWithPassword() {
+  if (!email.value || !password.value) return
   sending.value = true
   errorMsg.value = ''
-  linkSent.value = false
   try {
-    const { error } = await supabase.auth.signInWithOtp({ email: email.value })
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.value,
+      password: password.value,
+    })
     if (error) throw error
-    linkSent.value = true
+    uni.showToast({ title: '登录成功，正在加载...', icon: 'success', duration: 1200 })
+    setTimeout(() => { window.location.reload() }, 1200)
   } catch (e) {
     errorMsg.value = e.message
   } finally {
@@ -133,33 +139,43 @@ async function verifyCode() {
 
 <style>
 .modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  position: fixed; inset: 0; background: rgba(43,38,34,0.45);
   display: flex; align-items: center; justify-content: center; z-index: 200;
 }
 .modal-content {
-  background: #fff; border-radius: 24px; padding: 32px 24px;
+  background: var(--bg-card); border-radius: var(--radius-lg); padding: 32px 24px;
   width: 85%; max-width: 360px;
+  border: 1px solid var(--gold-line);
+  box-shadow: var(--shadow-lg);
 }
-.modal-title { font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 16px; }
+.modal-title {
+  font-size: 22px; font-weight: bold; text-align: center; margin-bottom: 16px;
+  font-family: var(--font-family-title); letter-spacing: 2px; color: var(--ink);
+}
 .access-code-input-wrapper {
   display: flex; align-items: center;
-  border: 2px solid #ddd; border-radius: 12px; padding: 0 4px; margin: 16px 0;
+  border: 1px solid var(--gold-line); border-radius: var(--radius-md); padding: 0 4px; margin: 16px 0;
+  background: var(--bg-sunken);
 }
 .access-input { flex: 1; height: 48px; padding: 0 12px; font-size: 16px; }
 .toggle-eye-wrapper { min-width: 48px; min-height: 48px; display: flex; align-items: center; justify-content: center; }
 .btn-verify {
-  width: 100%; height: 48px; background: #8B1A1A; color: #fff;
-  border-radius: 12px; font-size: 16px; margin-top: 16px;
+  width: 100%; height: 48px; background: var(--primary); color: #f6ecd6;
+  border-radius: var(--radius-lg); font-size: 16px; margin-top: 16px; letter-spacing: 1px;
+  box-shadow: 0 2px 10px rgba(139,26,26,0.2);
 }
 .btn-verify[disabled] { opacity: 0.5; }
-.error-text { color: #E74C3C; font-size: 14px; text-align: center; margin-top: 8px; }
-.success-text { color: #27AE60; font-size: 14px; text-align: center; margin-top: 8px; }
-.hint-text { font-size: 13px; color: #6B6B6B; text-align: center; }
+.error-text { color: var(--error); font-size: 14px; text-align: center; margin-top: 8px; }
+.success-text { color: var(--success); font-size: 14px; text-align: center; margin-top: 8px; }
+.hint-text { font-size: 13px; color: var(--ink-soft); text-align: center; }
 .toggle-mode {
   display: block; text-align: center; margin-top: 20px;
-  font-size: 14px; color: #8B1A1A; min-height: 48px; line-height: 48px;
+  font-size: 14px; color: var(--primary); min-height: 48px; line-height: 48px;
 }
 .form-group { margin-bottom: 12px; }
-.form-label { font-size: 14px; color: #6B6B6B; margin-bottom: 4px; display: block; }
-.form-input { width: 100%; height: 48px; border: 2px solid #ddd; border-radius: 12px; padding: 0 12px; font-size: 16px; }
+.form-label { font-size: 14px; color: var(--ink-soft); margin-bottom: 4px; display: block; }
+.form-input {
+  width: 100%; height: 48px; border: 1px solid var(--gold-line); border-radius: var(--radius-md);
+  padding: 0 12px; font-size: 16px; background: var(--bg-sunken);
+}
 </style>

@@ -1,5 +1,7 @@
 <template>
+  <view v-if="visible" class="drawer-backdrop" @click="hide"></view>
   <view v-if="visible" class="member-drawer">
+    <text class="drawer-close" @click="hide">✕</text>
     <view
       class="drawer-handle"
       @touchstart="onDragStart"
@@ -194,7 +196,31 @@ defineExpose({ show, hide });
   background: var(--bg-card);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   box-shadow: var(--shadow-lg);
+  border-top: 2px solid var(--gold);
   transition: transform var(--transition-normal);
+}
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  background: rgba(43, 38, 34, 0.4);
+}
+.drawer-close {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-md);
+  z-index: 101;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--ink-soft);
+  border-radius: 50%;
+}
+.drawer-close:active {
+  background: rgba(43, 38, 34, 0.06);
 }
 .drawer-handle {
   display: flex;
@@ -203,9 +229,9 @@ defineExpose({ show, hide });
   cursor: grab;
 }
 .handle-bar {
-  width: 40px;
+  width: 44px;
   height: 4px;
-  background: var(--border-light);
+  background: var(--gold-line);
   border-radius: 2px;
 }
 .drawer-body {
@@ -215,32 +241,39 @@ defineExpose({ show, hide });
 }
 .profile-section {
   text-align: center;
-  padding: 0 var(--spacing-lg);
+  padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-md);
+  border-bottom: 1px solid var(--gold-line);
 }
 .avatar-wrapper {
-  width: 60px;
-  height: 60px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   overflow: hidden;
   margin: 0 auto var(--spacing-sm);
+  border: 2px solid var(--gold);
+  box-shadow: 0 2px 10px rgba(201, 169, 110, 0.35);
 }
 .avatar-placeholder {
-  width: 60px;
-  height: 60px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
-  background: var(--primary);
+  background: linear-gradient(145deg, var(--primary) 0%, var(--primary-deep) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .avatar-initial {
-  color: #fff;
+  color: #f6ecd6;
   font-size: var(--font-size-2xl);
   font-weight: bold;
+  font-family: var(--font-family-title);
 }
 .member-name {
   font-size: var(--font-size-xl);
   font-weight: bold;
+  font-family: var(--font-family-title);
+  letter-spacing: 1px;
+  color: var(--ink);
   text-align: center;
 }
 .alive-tag {
@@ -248,20 +281,23 @@ defineExpose({ show, hide });
   font-size: var(--font-size-base);
   text-align: center;
   display: block;
+  letter-spacing: 1px;
 }
 .years {
-  color: var(--text-secondary);
+  color: var(--ink-soft);
   font-size: var(--font-size-base);
   text-align: center;
   display: block;
+  font-family: var(--font-family-title);
+  letter-spacing: 1px;
 }
 .biography {
   padding: var(--spacing-sm) var(--spacing-lg);
 }
 .bio-text {
   font-size: var(--font-size-base);
-  color: var(--text-primary);
-  line-height: 1.6;
+  color: var(--ink);
+  line-height: 1.7;
 }
 .expanded-content {
   flex: 1;
@@ -276,18 +312,24 @@ defineExpose({ show, hide });
 .section-title {
   font-size: var(--font-size-base);
   font-weight: bold;
-  color: var(--text-secondary);
+  font-family: var(--font-family-title);
+  color: var(--gold-deep);
+  letter-spacing: 1px;
   margin-bottom: var(--spacing-sm);
   display: block;
+  border-left: 3px solid var(--gold);
+  padding-left: var(--spacing-sm);
 }
 .relation-row {
   display: flex;
-  padding: 6px 0;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--gold-line);
 }
 .relation-label {
-  width: 48px;
+  width: 56px;
   font-size: var(--font-size-base);
-  color: var(--text-secondary);
+  color: var(--ink-soft);
+  font-family: var(--font-family-title);
 }
 .relation-value {
   font-size: var(--font-size-base);
@@ -295,7 +337,7 @@ defineExpose({ show, hide });
 }
 .relation-empty {
   font-size: var(--font-size-base);
-  color: var(--text-hint);
+  color: var(--ink-faint);
   font-style: italic;
 }
 
@@ -303,31 +345,35 @@ defineExpose({ show, hide });
 .action-bar {
   display: flex;
   gap: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border-top: 1px solid var(--border-light);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-top: 1px solid var(--gold-line);
 }
 .btn-set-identity {
   flex: 1;
   height: 48px;
   background: var(--primary);
-  color: #fff;
-  border-radius: var(--radius-md);
+  color: #f6ecd6;
+  border-radius: var(--radius-lg);
   font-size: var(--font-size-base);
+  letter-spacing: 1px;
+  box-shadow: 0 2px 10px rgba(139, 26, 26, 0.2);
 }
 .btn-edit {
   flex: 1;
   height: 48px;
   background: var(--bg-card);
-  border: 1px solid var(--primary);
-  color: var(--primary);
+  border: 1px solid var(--gold);
+  color: var(--gold-deep);
   border-radius: var(--radius-md);
   font-size: var(--font-size-base);
+  letter-spacing: 1px;
 }
 .hint-text {
   font-size: var(--font-size-base);
-  color: var(--text-secondary);
+  color: var(--ink-soft);
   text-align: center;
   flex: 1;
   align-self: center;
+  font-family: var(--font-family-title);
 }
 </style>

@@ -149,10 +149,15 @@ watch(
   font-weight: bold;
   margin-bottom: var(--spacing-sm);
   display: block;
+  font-family: var(--font-family-title);
+  letter-spacing: 1px;
+  color: var(--gold-deep);
+  border-left: 3px solid var(--gold);
+  padding-left: var(--spacing-sm);
 }
 .event-card {
   background: var(--bg-card);
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--gold-line);
   border-radius: var(--radius-md);
   margin-bottom: var(--spacing-sm);
   overflow: hidden;
@@ -169,6 +174,7 @@ watch(
   font-weight: bold;
   font-size: var(--font-size-base);
   min-width: 48px;
+  font-family: var(--font-family-title);
 }
 .event-icon {
   font-size: var(--font-size-md);
@@ -176,29 +182,30 @@ watch(
 .event-title {
   flex: 1;
   font-size: var(--font-size-base);
+  color: var(--ink);
 }
 .expand-btn {
   font-size: var(--font-size-sm);
-  color: var(--text-hint);
+  color: var(--ink-faint);
   min-width: 24px;
   text-align: center;
 }
 .event-body {
   padding: 0 var(--spacing-sm) var(--spacing-sm);
-  border-top: 1px dashed var(--border-light);
+  border-top: 1px dashed var(--gold-line);
   margin-top: 0;
   padding-top: var(--spacing-sm);
 }
 .event-desc {
   font-size: var(--font-size-base);
-  color: var(--text-primary);
-  line-height: 1.6;
+  color: var(--ink);
+  line-height: 1.7;
   display: block;
   margin-bottom: var(--spacing-xs);
 }
 .event-location {
   font-size: var(--font-size-sm);
-  color: var(--text-secondary);
+  color: var(--ink-soft);
   display: block;
   margin-bottom: var(--spacing-sm);
 }
@@ -212,29 +219,32 @@ watch(
   width: 80px;
   height: 80px;
   border-radius: var(--radius-sm);
+  border: 1px solid var(--gold-line);
 }
 .more-thumb {
   width: 80px;
   height: 80px;
   border-radius: var(--radius-sm);
-  background: var(--bg-hover);
+  background: var(--bg-sunken);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: var(--font-size-base);
-  color: var(--text-secondary);
+  color: var(--ink-soft);
 }
 .bio-text {
   font-size: var(--font-size-base);
-  color: var(--text-primary);
-  line-height: 1.6;
+  color: var(--ink);
+  line-height: 1.7;
   padding: var(--spacing-sm) 0;
 }
 .empty-timeline {
   font-size: var(--font-size-base);
-  color: var(--text-hint);
+  color: var(--ink-faint);
   text-align: center;
   padding: var(--spacing-lg) 0;
+  font-family: var(--font-family-title);
+  letter-spacing: 0.5px;
 }
 .gallery-entry {
   text-align: center;
@@ -245,5 +255,6 @@ watch(
   display: flex;
   align-items: center;
   justify-content: center;
+  letter-spacing: 0.5px;
 }
 </style>

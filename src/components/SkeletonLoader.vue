@@ -17,11 +17,13 @@
   height: 80px;
   border-radius: 50%;
   margin: var(--spacing-lg) auto;
+  border: 2px solid var(--gold-line);
 }
 .skeleton-line {
   height: 16px;
   border-radius: var(--radius-sm);
   margin: var(--spacing-sm) 0;
+  background-color: var(--bg-sunken);
 }
 .w-60 {
   width: 60%;
