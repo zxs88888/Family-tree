@@ -35,7 +35,7 @@
           :d="e.d"
           fill="none"
         />
-        <!-- 节点：色点 + 名卡 + 称谓 -->
+        <!-- 节点：透明命中圆（覆盖名卡/称谓，便于点选）+ 色点 + 名卡 + 称谓 -->
         <g
           v-for="n in model.nodes"
           :key="'n' + n.id"
@@ -47,6 +47,7 @@
           ]"
           @click.stop="onNodeClick(n.id)"
         >
+          <circle class="hit" :cx="n.x" :cy="n.y" :r="NODE_R + 30" fill="transparent" />
           <circle
             :cx="n.x"
             :cy="n.y"
@@ -162,6 +163,8 @@ const transform = reactive({ x: 0, y: 0, k: 1 });
 const grabbing = ref(false);
 let needsFit = true;
 let dragStart = null;
+let justPanned = false; // 拖拽刚结束 → 抑制随后误触发的 click（避免松开即取消选中）
+const CLICK_THRESHOLD = 4; // 像素：小于此位移视为「点击」而非「拖拽」
 
 function svgPoint(e) {
   const rect = svgRef.value.getBoundingClientRect();
@@ -184,22 +187,34 @@ function fitView() {
   transform.y = (h - ch * k) / 2 - b.minY * k;
   needsFit = false;
 }
+// 按下：仅记录起点，不捕获指针——确保「点击」能正常触发节点 click
 function onPointerDown(e) {
-  grabbing.value = true;
   const p = svgPoint(e);
-  dragStart = { x: p.x, y: p.y, tx: transform.x, ty: transform.y };
-  svgRef.value.setPointerCapture?.(e.pointerId);
+  dragStart = { x: p.x, y: p.y, tx: transform.x, ty: transform.y, id: e.pointerId, moved: false };
 }
 function onPointerMove(e) {
   if (!dragStart) return;
   const p = svgPoint(e);
-  transform.x = dragStart.tx + (p.x - dragStart.x);
-  transform.y = dragStart.ty + (p.y - dragStart.y);
+  const dx = p.x - dragStart.x;
+  const dy = p.y - dragStart.y;
+  // 超过阈值才判定为拖拽，并此刻才捕获指针（点击不会捕获，故节点 click 不被吞）
+  if (!dragStart.moved && Math.hypot(dx, dy) > CLICK_THRESHOLD) {
+    dragStart.moved = true;
+    grabbing.value = true;
+    svgRef.value.setPointerCapture?.(dragStart.id);
+  }
+  if (dragStart.moved) {
+    transform.x = dragStart.tx + dx;
+    transform.y = dragStart.ty + dy;
+  }
 }
 function onPointerUp(e) {
   grabbing.value = false;
-  dragStart = null;
-  svgRef.value?.releasePointerCapture?.(e.pointerId);
+  if (dragStart) {
+    if (dragStart.moved) justPanned = true; // 标记：随后的 click 是拖拽残影，需忽略
+    svgRef.value?.releasePointerCapture?.(dragStart.id);
+    dragStart = null;
+  }
 }
 function onWheel(e) {
   e.preventDefault();
@@ -228,10 +243,20 @@ function zoomBy(f) {
 
 // ── 交互 ──
 function onNodeClick(id) {
+  if (justPanned) {
+    // 这是「拖拽后松手」误触发的 click，忽略
+    justPanned = false;
+    return;
+  }
   selectedId.value = id;
   emit("node-click", id); // 打开成员详情抽屉（沿用旧交互）
 }
 function onBackgroundClick() {
+  if (justPanned) {
+    // 拖拽残影，忽略
+    justPanned = false;
+    return;
+  }
   selectedId.value = null;
 }
 function switchView(view) {
@@ -339,6 +364,10 @@ onUnmounted(() => {
 .node {
   cursor: pointer;
   transition: opacity 0.18s;
+}
+.node .hit {
+  fill: transparent;
+  pointer-events: all; /* 透明命中区，点名卡/称谓也能选中 */
 }
 .node:hover circle {
   stroke: #8b1a1a;
