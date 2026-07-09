@@ -43,7 +43,6 @@
           :class="[
             n.isMe && 'is-me',
             n.id === selectedId && 'selected',
-            nodeState[n.id] && nodeState[n.id].hl && 'hl',
             nodeState[n.id] && nodeState[n.id].dim && 'dim',
           ]"
           @click.stop="onNodeClick(n.id)"
@@ -149,7 +148,6 @@ const nodeState = computed(() => {
   const m = {};
   model.value.nodes.forEach((n) => {
     m[n.id] = {
-      hl: !!H.value && H.value.has(n.id),
       dim: !!V.value && !V.value.has(n.id),
     };
   });
@@ -409,11 +407,8 @@ onUnmounted(() => {
     filter: drop-shadow(0 0 14px rgba(212, 175, 55, 0.9));
   }
 }
-.node.hl circle {
-  stroke: #d4af37 !important;
-  stroke-width: 4 !important;
-}
-/* 当前选中节点：比血缘金环更亮、带光晕，明确"当前焦点是谁" */
+/* 当前选中节点：强聚焦环 + 光晕，明确"当前焦点是谁"；
+   相关联角色（祖先/后代/配偶）只通过金色连线体现，不再套大圈 */
 .node.selected circle {
   stroke: #d4af37 !important;
   stroke-width: 5 !important;
