@@ -273,6 +273,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useFamilyStore } from "@/stores/familyStore";
 import { supabase } from "@/utils/supabase";
+import * as XLSX from "xlsx";
 import {
   parseTimeline,
   detectDuplicateNames,
@@ -477,7 +478,6 @@ async function chooseFile() {
   previewRows.value = [];
   importResult.value = null;
   try {
-    const XLSX = await import("xlsx");
     const data = await readFileAsArrayBuffer(
       selectedFile.value,
     );
@@ -530,7 +530,6 @@ async function startImport() {
   importing.value = true;
   importResult.value = null;
   try {
-    const XLSX = await import("xlsx");
     const data = await readFileAsArrayBuffer(
       selectedFile.value,
     );
