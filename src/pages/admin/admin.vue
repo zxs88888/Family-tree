@@ -591,22 +591,42 @@ async function startImport() {
       familyStore.allMembers,
     );
 
-    // 分批插入 + 回滚
-    const allInsertedIds = [];
     const chunkSize = 500;
+    const existingIds = new Set(
+      (familyStore.allMembers || []).map((m) => m.id),
+    );
+    // 已存在（按姓名复用 id）的走更新；其余新增
+    const toInsert = resolved.members.filter((m) => !existingIds.has(m.id));
+    const toUpdate = resolved.members.filter((m) => existingIds.has(m.id));
 
-    for (let i = 0; i < resolved.members.length; i += chunkSize) {
-      const chunk = resolved.members.slice(i, i + chunkSize);
+    // 已存在成员：upsert 更新（含父亲/母亲/配偶链接），未填写字段不覆盖
+    if (toUpdate.length > 0) {
+      const { error: updErr } = await supabase
+        .from("members")
+        .upsert(toUpdate, { onConflict: "id" });
+      if (updErr) {
+        importResult.value = {
+          success: false,
+          errors: ["更新成员失败: " + updErr.message],
+        };
+        return;
+      }
+    }
+
+    // 新增成员：插入（分批 + 失败回滚）
+    const newlyInsertedIds = [];
+    for (let i = 0; i < toInsert.length; i += chunkSize) {
+      const chunk = toInsert.slice(i, i + chunkSize);
       const { data: inserted, error } = await supabase
         .from("members")
         .insert(chunk)
         .select("id");
       if (error) {
-        if (allInsertedIds.length > 0) {
+        if (newlyInsertedIds.length > 0) {
           await supabase
             .from("members")
             .update({ is_deleted: true })
-            .in("id", allInsertedIds);
+            .in("id", newlyInsertedIds);
         }
         importResult.value = {
           success: false,
@@ -614,18 +634,24 @@ async function startImport() {
         };
         return;
       }
-      allInsertedIds.push(...inserted.map((d) => d.id));
+      newlyInsertedIds.push(...inserted.map((d) => d.id));
     }
 
-    // 插入事件
-    for (let i = 0; i < resolved.events.length; i += chunkSize) {
-      const chunk = resolved.events.slice(i, i + chunkSize);
+    // 时间线：仅新增成员插入，避免重复/覆盖已有时间线
+    const newMemberIds = new Set(toInsert.map((m) => m.id));
+    const newEvents = resolved.events.filter((e) =>
+      newMemberIds.has(e.member_id),
+    );
+    for (let i = 0; i < newEvents.length; i += chunkSize) {
+      const chunk = newEvents.slice(i, i + chunkSize);
       const { error } = await supabase.from("life_events").insert(chunk);
       if (error) {
-        await supabase
-          .from("members")
-          .update({ is_deleted: true })
-          .in("id", allInsertedIds);
+        if (newlyInsertedIds.length > 0) {
+          await supabase
+            .from("members")
+            .update({ is_deleted: true })
+            .in("id", newlyInsertedIds);
+        }
         importResult.value = {
           success: false,
           errors: ["插入事件失败: " + error.message],
@@ -634,27 +660,11 @@ async function startImport() {
       }
     }
 
-    // 导入后清空 biography
-    if (allInsertedIds.length > 0) {
-      const { data: eventCounts } = await supabase
-        .from("life_events")
-        .select("member_id")
-        .in("member_id", allInsertedIds);
-      const hasEventsIds = [
-        ...new Set(eventCounts?.map((e) => e.member_id) || []),
-      ];
-      for (let i = 0; i < hasEventsIds.length; i += 500) {
-        await supabase
-          .from("members")
-          .update({ biography: null })
-          .in("id", hasEventsIds.slice(i, i + 500));
-      }
-    }
-
     importResult.value = {
       success: true,
       memberCount: resolved.members.length,
       eventCount: resolved.events.length,
+      updatedCount: toUpdate.length,
     };
     await familyStore.refresh(VITE_FAMILY_ID);
   } catch (e) {

@@ -41,7 +41,13 @@ export function buildGraphData(flatMembers, centerId, depth = 3) {
 
   // BFS 构图（depth 限制的视口）
   const visitedGraph = new Set();
-  const queueGraph = [{ id: centerId || flatMembers[0]?.id, currentDepth: 0 }];
+  // 种子：脉系视图从 centerId 出发（只看其连通血缘）；
+  // 全局视图（无 centerId）从所有成员出发，覆盖全部连通分量，
+  // 避免多个互不连通的子族只渲染其中一个（如树森支与永康支未连通时）。
+  const seedIds = centerId
+    ? [centerId]
+    : flatMembers.map((m) => m.id);
+  const queueGraph = seedIds.map((id) => ({ id, currentDepth: 0 }));
   const resultNodes = [];
   const resultLinks = [];
   const linkSet = new Set();

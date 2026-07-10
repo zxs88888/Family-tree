@@ -109,6 +109,7 @@ export function resolveReferences(rows, nameToRow, familyId, existingMembers) {
 
   for (const row of rows) {
     const memberId = idMap.get(row.姓名);
+    const isExisting = existingMap.has(row.姓名);
 
     const resolveName = (name) => {
       if (!name) return null;
@@ -118,18 +119,27 @@ export function resolveReferences(rows, nameToRow, familyId, existingMembers) {
       return existingMap.get(name) || null;
     };
 
+    // 已存在的成员：CSV 中留空的字段用 undefined（Supabase 不会发送该字段），
+    // 避免 upsert 时把库里已有数据清空；仅更新 CSV 实际填写的字段。
+    const opt = (csvVal, parsed) => (csvVal ? parsed : isExisting ? undefined : null);
+    const relField = (csvName) => {
+      if (!csvName) return isExisting ? undefined : null;
+      const rid = resolveName(csvName);
+      return rid || (isExisting ? undefined : null);
+    };
+
     members.push({
       id: memberId,
       family_id: familyId,
       name: row.姓名,
-      gender: row.性别 ? parseInt(row.性别) : null,
-      birth_year: row.生年 ? parseInt(row.生年) : null,
-      death_year: row.卒年 ? parseInt(row.卒年) : null,
-      is_alive: !row.卒年,
-      biography: row.生平简介 || null,
-      father_id: resolveName(row.父亲),
-      mother_id: resolveName(row.母亲),
-      spouse_id: resolveName(row.配偶),
+      gender: opt(row.性别, parseInt(row.性别)),
+      birth_year: opt(row.生年, parseInt(row.生年)),
+      death_year: opt(row.卒年, parseInt(row.卒年)),
+      is_alive: row.卒年 ? false : isExisting ? undefined : true,
+      biography: row.生平简介 || (isExisting ? undefined : null),
+      father_id: relField(row.父亲),
+      mother_id: relField(row.母亲),
+      spouse_id: relField(row.配偶),
       is_deleted: false,
     });
 
