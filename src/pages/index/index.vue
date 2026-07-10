@@ -79,7 +79,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useUserStore } from "@/stores/userStore";
 import { useFamilyStore } from "@/stores/familyStore";
 import { supabase } from "@/utils/supabase";
@@ -233,6 +233,17 @@ onMounted(async () => {
     await loadAllMembers();
   }
 });
+
+// 数据变化（导入 / 新增 / 编辑 / 删除成员）后自动重建图谱，
+// 解决从 admin 返回 index 时 onMounted 不重跑、graphData 停留在旧数据的问题
+watch(
+  () => familyStore.allMembers,
+  () => {
+    if (familyStore.loaded && familyStore.allMembers.length) {
+      familyStore.buildGraph(userStore.myMemberId, 50);
+    }
+  },
+);
 </script>
 
 <style>
