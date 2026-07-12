@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "dev:h5": "UNI_INPUT_DIR=src UNI_PLATFORM=h5 UNI_OUTPUT_DIR=dist vite",
     "build:h5": "UNI_INPUT_DIR=src UNI_PLATFORM=h5 UNI_OUTPUT_DIR=dist vite build",

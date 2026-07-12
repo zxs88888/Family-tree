@@ -11,9 +11,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Visit both to keep active
+        env:
+          SUPABASE_URL: ${{ secrets.KEEPALIVE_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.KEEPALIVE_SUPABASE_ANON_KEY }}
+          VERCEL_URL: ${{ secrets.KEEPALIVE_VERCEL_URL }}
         run: |
-          curl -s -o /dev/null --max-time 15 \
-            "https://bbjzibxmxcmtrjbscilq.supabase.co/rest/v1/" \
-            -H "apikey: sb_publishable_ELMfIa0BNk7WxFOKQl1bXQ_ERjl3jSX" || true
-          curl -s -o /dev/null --max-time 15 \
-            "https://family-tau-seven.vercel.app" || true
+          if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ]; then
+            curl -s -o /dev/null --max-time 15 \
+              "${SUPABASE_URL%/}/rest/v1/" \
+              -H "apikey: ${SUPABASE_ANON_KEY}" || true
+          else
+            echo "KEEPALIVE_SUPABASE_* secrets missing; skip Supabase ping"
+          fi
+          if [ -n "$VERCEL_URL" ]; then
+            curl -s -o /dev/null --max-time 15 "$VERCEL_URL" || true
+          else
+            echo "KEEPALIVE_VERCEL_URL secret missing; skip Vercel ping"
+          fi
