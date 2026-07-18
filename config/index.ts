@@ -1,3 +1,4 @@
+import path from 'path'
 import type { UserConfigExport } from '@tarojs/cli'
 
 export default {
@@ -13,6 +14,9 @@ export default {
   sourceRoot: 'src',
   outputRoot: 'dist',
   plugins: ['@tarojs/plugin-framework-vue3', '@tarojs/plugin-platform-h5', '@tarojs/plugin-platform-weapp'],
+  alias: {
+    '@': path.resolve(__dirname, '..', 'src'),
+  },
   defineConstants: {},
   copy: { patterns: [], options: {} },
   framework: 'vue3',
