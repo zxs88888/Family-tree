@@ -1,0 +1,48 @@
+{
+  "name": "family",
+  "version": "1.0.0",
+  "private": true,
+  "description": "家族族谱管理应用",
+  "templateInfo": {
+    "name": "vue3",
+    "typescript": true,
+    "css": "sass"
+  },
+  "scripts": {
+    "build:h5": "taro build --type h5",
+    "dev:h5": "npm run build:h5 -- --watch",
+    "build:weapp": "taro build --type weapp",
+    "dev:weapp": "npm run build:weapp -- --watch"
+  },
+  "browserslist": [
+    "last 3 versions",
+    "Android >= 4.1",
+    "ios >= 8"
+  ],
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "@tarojs/components": "4.2.1",
+    "@tarojs/helper": "4.2.1",
+    "@tarojs/plugin-framework-vue3": "4.2.1",
+    "@tarojs/plugin-platform-h5": "4.2.1",
+    "@tarojs/plugin-platform-weapp": "4.2.1",
+    "@tarojs/runtime": "4.2.1",
+    "@tarojs/shared": "4.2.1",
+    "@tarojs/taro": "4.2.1",
+    "pinia": "^2.1.0",
+    "vue": "^3.4.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.0",
+    "@tarojs/cli": "4.2.1",
+    "@tarojs/webpack5-runner": "4.2.1",
+    "@vue/babel-plugin-jsx": "^3.0.0",
+    "@vue/compiler-sfc": "^3.4.0",
+    "babel-preset-taro": "4.2.1",
+    "postcss": "^8.4.0",
+    "sass": "^1.77.0",
+    "typescript": "^5.4.0",
+    "vue-loader": "^17.4.2",
+    "webpack": "^5.91.0"
+  }
+}
