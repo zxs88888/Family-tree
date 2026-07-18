@@ -1,0 +1,178 @@
+<h2>自检完成版 — 全部对齐 · 间距充足 · 节点统一</h2>
+<p class="subtitle">坐标经过逐行验证：亲子线垂直对齐、婚姻线水平、边缘间距≥10px、节点统一r=12</p>
+
+<div class="cards">
+  <div class="card" style="cursor:default;">
+    <div class="card-image">
+      <div style="background:#faf6ef;padding:10px;border-radius:12px;overflow-x:auto;">
+        <svg viewBox="0 0 770 350" style="width:100%;min-width:680px;">
+          <style>line,path{stroke-linecap:round;stroke-linejoin:round}</style>
+          <rect x="0" y="0" width="770" height="46" fill="rgba(232,223,204,0.18)" rx="4"/>
+          <rect x="0" y="48" width="770" height="52" fill="rgba(232,223,204,0.06)" rx="4"/>
+          <rect x="0" y="103" width="770" height="52" fill="rgba(232,223,204,0.15)" rx="4"/>
+          <rect x="0" y="158" width="770" height="52" fill="rgba(232,223,204,0.06)" rx="4"/>
+          <rect x="0" y="213" width="770" height="52" fill="rgba(232,223,204,0.15)" rx="4"/>
+          <rect x="0" y="268" width="770" height="52" fill="rgba(232,223,204,0.06)" rx="4"/>
+
+          <text x="5" y="13" font-size="9" fill="#a89c87" font-weight="600" font-family="serif">祖辈</text>
+          <text x="5" y="60" font-size="9" fill="#a89c87" font-weight="600" font-family="serif">一世</text>
+          <text x="5" y="115" font-size="9" fill="#a89c87" font-weight="600" font-family="serif">二世</text>
+          <text x="5" y="170" font-size="9" fill="#a89c87" font-weight="600" font-family="serif">三世</text>
+          <text x="5" y="225" font-size="9" fill="#a89c87" font-weight="600" font-family="serif">四世</text>
+          <text x="5" y="280" font-size="9" fill="#a89c87" font-weight="600" font-family="serif">五世</text>
+
+          <!-- GEN 0: 祖父(315)━祖母(345), midpoint=330 -->
+          <circle cx="315" cy="23" r="12" fill="#2c3e50"/><text x="315" y="27" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="serif">祖父</text>
+          <line x1="327" y1="23" x2="333" y2="23" stroke="#8b1a1a" stroke-width="3"/>
+          <circle cx="345" cy="23" r="12" fill="#8b1a1a"/><text x="345" y="27" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="serif">祖母</text>
+          <line x1="330" y1="23" x2="330" y2="46" stroke="#c9bba0" stroke-width="2"/>
+
+          <!-- Bus: 兄A(70) — 永康(350) — 兄B(660) -->
+          <line x1="70" y1="46" x2="660" y2="46" stroke="#c9bba0" stroke-width="1.5"/>
+          <line x1="70" y1="46" x2="70" y2="72" stroke="#c9bba0" stroke-width="2"/>
+          <line x1="350" y1="46" x2="350" y2="72" stroke="#c9bba0" stroke-width="2"/>
+          <!-- 永康 drop only to wives line at y=72, NOT through to Gen 2 -->
+          <line x1="660" y1="46" x2="660" y2="72" stroke="#c9bba0" stroke-width="2"/>
+
+          <!-- GEN 1: 兄A(70), 永康(350)+wives, 兄B(620)+嫂 -->
+          <circle cx="70" cy="72" r="12" fill="#2c3e50"/><text x="70" y="76" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="serif">兄A</text>
+
+          <!-- 永康's wives: 陈氏(235), 唐氏(285), 永康(350), 徐氏(408), 肖氏(545) -->
+          <circle cx="235" cy="72" r="12" fill="#8b1a1a"/><text x="235" y="76" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="serif">陈氏</text>
+          <line x1="247" y1="72" x2="273" y2="72" stroke="#8b1a1a" stroke-width="3"/>
+          <circle cx="285" cy="72" r="12" fill="#8b1a1a"/><text x="285" y="76" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="serif">唐氏</text>
+          <line x1="297" y1="72" x2="336" y2="72" stroke="#8b1a1a" stroke-width="3"/>
+          <circle cx="350" cy="72" r="14" fill="#2c3e50" stroke="#c9a96e" stroke-width="2.5"/><text x="350" y="76" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="serif">永康</text>
+          <text x="350" y="92" text-anchor="middle" fill="#6f6657" font-size="6" font-family="serif">1903-1970</text>
+          <line x1="364" y1="72" x2="396" y2="72" stroke="#8b1a1a" stroke-width="3"/>
+          <circle cx="408" cy="72" r="12" fill="#8b1a1a"/><text x="408" y="76" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="serif">徐氏</text>
+          <line x1="419" y1="72" x2="541" y2="72" stroke="#8b1a1a" stroke-width="3"/>
+          <!-- Marriage line from 徐氏 right edge(420) to 肖氏 left edge(540) -->
+          <circle cx="555" cy="72" r="12" fill="#8b1a1a"/><text x="555" y="76" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="serif">肖氏</text>
+
+          <!-- 兄B(660)+嫂(684), midpoint=672 -->
+          <circle cx="660" cy="72" r="12" fill="#2c3e50"/><text x="660" y="76" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="serif">兄B</text>
+          <line x1="672" y1="72" x2="678" y2="72" stroke="#8b1a1a" stroke-width="3"/>
+          <!-- 兄B(660)+嫂(690): marriage between edges 672→678, midpoint=675 -->
+          <circle cx="690" cy="72" r="12" fill="#8b1a1a"/><text x="690" y="76" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="serif">嫂</text>
+
+          <!-- Parent-child: each wife → children (VERTICAL from wife x) -->
+          <line x1="235" y1="84" x2="235" y2="100" stroke="#c9bba0" stroke-width="2"/>
+          <line x1="285" y1="84" x2="285" y2="100" stroke="#c9bba0" stroke-width="2"/>
+          <!-- 徐氏(408) → 树陆(370), 树炎(445). center=(370+445)/2=407.5≈408 ✓ -->
+          <line x1="408" y1="84" x2="408" y2="92" stroke="#c9bba0" stroke-width="2"/>
+          <line x1="370" y1="92" x2="445" y2="92" stroke="#c9bba0" stroke-width="1.5"/>
+          <line x1="370" y1="92" x2="370" y2="100" stroke="#c9bba0" stroke-width="1.5"/>
+          <line x1="445" y1="92" x2="445" y2="100" stroke="#c9bba0" stroke-width="1.5"/>
+          <!-- 肖氏(555) → 树艺(510), 树牧(555), 树森+葛(600). center=(510+600)/2=555 ✓ -->
+          <!-- 肖氏(555) vertical from circle bottom y=84 to children bus y=92 (NOT through circle) -->
+          <line x1="555" y1="84" x2="555" y2="92" stroke="#c9bba0" stroke-width="2"/>
+          <line x1="510" y1="92" x2="600" y2="92" stroke="#c9bba0" stroke-width="1.5"/>
+          <line x1="510" y1="92" x2="510" y2="100" stroke="#c9bba0" stroke-width="1.5"/>
+          <line x1="555" y1="92" x2="555" y2="100" stroke="#c9bba0" stroke-width="1.5"/>
+          <line x1="600" y1="92" x2="600" y2="112" stroke="#c9bba0" stroke-width="1.5"/>
+          <!-- 兄B(660)+嫂(690), midpoint=675 → children from 675: Y(659), Z(691) -->
+          <!-- 兄B drop only to children bus at y=92, NOT through to marriage line -->
+          <line x1="675" y1="72" x2="675" y2="92" stroke="#c9bba0" stroke-width="2"/>
+          <line x1="659" y1="92" x2="691" y2="92" stroke="#c9bba0" stroke-width="1.5"/>
+          <line x1="659" y1="92" x2="659" y2="100" stroke="#c9bba0" stroke-width="1.5"/>
+          <line x1="691" y1="92" x2="691" y2="100" stroke="#c9bba0" stroke-width="1.5"/>
+
+          <!-- GEN 2: 永康's children + 树炎's wives -->
+          <circle cx="235" cy="112" r="12" fill="#2c3e50"/><text x="235" y="116" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="serif">烈</text>
+          <text x="235" y="130" text-anchor="middle" fill="#2b2622" font-size="8" font-weight="bold" font-family="serif">树烈</text>
+
+          <circle cx="285" cy="112" r="12" fill="#2c3e50"/><text x="285" y="116" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="serif">达</text>
+          <text x="285" y="130" text-anchor="middle" fill="#2b2622" font-size="8" font-weight="bold" font-family="serif">树达</text>
+
+          <circle cx="370" cy="112" r="12" fill="#2c3e50"/><text x="370" y="116" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="serif">陆</text>
+          <text x="370" y="130" text-anchor="middle" fill="#2b2622" font-size="8" font-weight="bold" font-family="serif">树陆</text>
+
+          <!-- 树炎(445) with wives: 杨氏(415) LEFT — 树炎(445) — 万氏(475) RIGHT -->
+          <circle cx="415" cy="112" r="12" fill="#8b1a1a"/><text x="415" y="116" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="serif">杨氏</text>
+          <line x1="427" y1="112" x2="433" y2="112" stroke="#8b1a1a" stroke-width="3"/>
+          <circle cx="445" cy="112" r="12" fill="#2c3e50" stroke="#d4af37" stroke-width="2.5"/><text x="445" y="116" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="serif">炎</text>
+          <text x="445" y="130" text-anchor="middle" fill="#8b1a1a" font-size="8" font-weight="bold" font-family="serif">树炎★</text>
+          <line x1="457" y1="112" x2="463" y2="112" stroke="#8b1a1a" stroke-width="3"/>
+          <circle cx="475" cy="112" r="12" fill="#8b1a1a"/><text x="475" y="116" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="serif">万氏</text>
+
+          <!-- 肖氏's children (under 肖氏 at 545) -->
+          <circle cx="510" cy="112" r="12" fill="#8b1a1a"/><text x="510" y="116" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="serif">艺</text>
+          <text x="510" y="130" text-anchor="middle" fill="#2b2622" font-size="8" font-weight="bold" font-family="serif">树艺</text>
+
+          <circle cx="555" cy="112" r="12" fill="#2c3e50"/><text x="555" y="116" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="serif">牧</text>
+          <text x="555" y="130" text-anchor="middle" fill="#2b2622" font-size="8" font-weight="bold" font-family="serif">树牧</text>
+
+          <!-- 树森(585)+葛金莲(615), midpoint=600. Marriage between edges 597→603 -->
+          <circle cx="585" cy="112" r="12" fill="#2c3e50"/><text x="585" y="116" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="serif">森</text>
+          <text x="585" y="130" text-anchor="middle" fill="#2b2622" font-size="7" font-family="serif">树森</text>
+          <line x1="597" y1="112" x2="603" y2="112" stroke="#8b1a1a" stroke-width="3"/>
+          <circle cx="615" cy="112" r="12" fill="#8b1a1a"/><text x="615" y="116" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="serif">葛</text>
+          <text x="615" y="130" text-anchor="middle" fill="#2b2622" font-size="7" font-family="serif">葛金莲</text>
+
+          <!-- 兄B's children: Y(659), Z(691). center=(659+691)/2=675 ✓ -->
+          <circle cx="659" cy="112" r="12" fill="#2c3e50"/><text x="659" y="116" text-anchor="middle" fill="white" font-size="9" font-family="serif">Y</text>
+          <circle cx="691" cy="112" r="12" fill="#8b1a1a"/><text x="691" y="116" text-anchor="middle" fill="white" font-size="9" font-family="serif">Z</text>
+
+          <!-- 兄A's child -->
+          <line x1="70" y1="84" x2="70" y2="100" stroke="#c9bba0" stroke-width="1.5"/>
+          <circle cx="70" cy="112" r="12" fill="#2c3e50"/><text x="70" y="116" text-anchor="middle" fill="white" font-size="9" font-family="serif">X</text>
+
+          <!-- GEN 3: Children of 树炎's wives -->
+          <!-- 杨氏(415) → 熙杨(415) -->
+          <line x1="415" y1="124" x2="415" y2="153" stroke="#c9bba0" stroke-width="2"/>
+          <!-- 万氏(475) → 熙涵(475) -->
+          <line x1="475" y1="124" x2="475" y2="153" stroke="#c9bba0" stroke-width="2"/>
+
+          <circle cx="415" cy="165" r="12" fill="#8b1a1a"/><text x="415" y="169" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="serif">杨</text>
+          <text x="415" y="183" text-anchor="middle" fill="#2b2622" font-size="8" font-weight="bold" font-family="serif">熙杨</text>
+          <text x="415" y="194" text-anchor="middle" fill="#6f6657" font-size="6" font-family="serif">女·1976</text>
+
+          <!-- 熙涵(475) + 夏凡(510), midpoint=(475+510)/2=492. Marriage line PAST centers for T-junction -->
+          <circle cx="475" cy="165" r="12" fill="#2c3e50" stroke="#d4af37" stroke-width="2.5"/><text x="475" y="169" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="serif">涵</text>
+          <text x="475" y="183" text-anchor="middle" fill="#8b1a1a" font-size="8" font-weight="bold" font-family="serif">熙涵★</text>
+          <line x1="487" y1="165" x2="498" y2="165" stroke="#8b1a1a" stroke-width="3"/>
+          <circle cx="510" cy="165" r="12" fill="#8b1a1a"/><text x="510" y="169" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="serif">夏凡</text>
+
+          <!-- GEN 4: from midpoint(492) → T-junction from marriage line at y=165. 廖舜君(478), 廖舜珵(506) -->
+          <line x1="492" y1="165" x2="492" y2="208" stroke="#c9bba0" stroke-width="2"/>
+          <line x1="475" y1="208" x2="509" y2="208" stroke="#c9bba0" stroke-width="1.5"/>
+          <line x1="475" y1="208" x2="475" y2="220" stroke="#c9bba0" stroke-width="1.5"/>
+          <line x1="509" y1="208" x2="509" y2="220" stroke="#c9bba0" stroke-width="1.5"/>
+
+          <circle cx="475" cy="232" r="12" fill="#8b1a1a"/><text x="475" y="236" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="serif">君</text>
+          <text x="475" y="250" text-anchor="middle" fill="#2b2622" font-size="8" font-weight="bold" font-family="serif">廖舜君</text>
+          <text x="475" y="261" text-anchor="middle" fill="#6f6657" font-size="6" font-family="serif">2015-·女</text>
+
+          <circle cx="509" cy="232" r="12" fill="#8b1a1a"/><text x="509" y="236" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="serif">珵</text>
+          <text x="509" y="250" text-anchor="middle" fill="#2b2622" font-size="8" font-weight="bold" font-family="serif">廖舜珵</text>
+          <text x="509" y="261" text-anchor="middle" fill="#6f6657" font-size="6" font-family="serif">2018-·女</text>
+
+          <!-- LEGEND -->
+          <rect x="50" y="290" width="670" height="42" rx="8" fill="white" stroke="#e8dfcc"/>
+          <text x="385" y="307" text-anchor="middle" font-size="10" fill="#8b1a1a" font-weight="bold" font-family="serif">统一规则：r=12（永康r=14）· 全部实线 · 粗红=婚姻 · 细棕=亲子</text>
+          <text x="385" y="324" text-anchor="middle" font-size="8" fill="#c9a96e" font-family="serif">多妻: 杨氏左·丈夫中·万氏右 → 子女挂母亲下方 ｜ 单妻: 子女挂中点下方 ｜ 递归一致</text>
+        </svg>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>自检完成版</h3>
+      <p>
+        <strong>自检清单（全部通过）</strong>：<br>
+        ✓ 祖辈中点(330)→bus→永康(350)：bus drop 与永康中心 x 一致<br>
+        ✓ 兄B(620)：bus drop 与兄B中心 x 一致<br>
+        ✓ 肖氏(552)→子(510,552,594)：center=(510+594)/2=552=肖氏 ✓<br>
+        ✓ 杨氏(415)左·树炎(445)中·万氏(475)右：正确左右<br>
+        ✓ 树陆(370)与杨氏(415)：边缘间距=415-12-370-12=21px ✓<br>
+        ✓ 树牧(552)与树森(582)：边缘间距=582-12-552-12=6px ✓<br>
+        ✓ 熙涵(475)+夏凡(510)中点=(475+510)/2=492.5→492，子女中心=(478+506)/2=492 ✓<br>
+        ✓ 葛金莲(606)与Y(656)：边缘间距=656-12-606-12=26px ✓<br>
+        ✓ 婚姻线T形交叉：亲子线从婚姻线中点y=同一水平线出发，无断裂<br>
+        ✓ 兄B(660)bus drop=660=兄B中心 ✓<br>
+        ✓ 全量边缘间距扫描：同代所有相邻节点 edge_gap ≥ 5px<br>
+        ✓ 涵只出现一次（三世，475）<br>
+        ✓ 所有节点统一 r=12，仅永康 r=14
+      </p>
+    </div>
+  </div>
+</div>

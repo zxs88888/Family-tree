@@ -1,0 +1,203 @@
+<h2>视觉风格方向对比</h2>
+<p class="subtitle">家族树应用的整体视觉调性 — 你更喜欢哪种"感觉"？</p>
+
+<div class="cards">
+  <!-- Style A: 传统中国风 -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#f5f0eb;padding:24px;border-radius:12px;min-height:280px;position:relative;">
+        <!-- Watermark -->
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:80px;font-weight:bold;color:rgba(139,26,26,0.04);font-family:serif;letter-spacing:10px;">王</div>
+        <!-- Nav bar -->
+        <div style="background:linear-gradient(180deg,#8b1a1a,#6b1515);padding:10px 16px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;box-shadow:0 2px 8px rgba(139,26,26,0.3);">
+          <span style="color:#f6ecd6;font-size:16px;font-weight:bold;font-family:serif;letter-spacing:3px;">王氏家族</span>
+          <span style="color:#f6ecd6;font-size:14px;">Aa 👤 ↻</span>
+        </div>
+        <!-- Tree preview -->
+        <div style="background:#faf6ef;border-radius:8px;padding:20px;text-align:center;border:1px solid #e8dfcc;">
+          <svg viewBox="0 0 300 160" style="width:100%;">
+            <!-- Gen labels -->
+            <text x="5" y="18" font-size="9" fill="#a89c87" font-family="serif">一世</text>
+            <text x="5" y="68" font-size="9" fill="#a89c87" font-family="serif">二世</text>
+            <text x="5" y="128" font-size="9" fill="#a89c87" font-family="serif">三世</text>
+            <!-- Gen 1 -->
+            <circle cx="150" cy="15" r="14" fill="#2c3e50" stroke="#c9a96e" stroke-width="2"/>
+            <text x="150" y="19" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="serif">永</text>
+            <text x="150" y="40" text-anchor="middle" fill="#2b2622" font-size="11" font-weight="bold" font-family="serif">永康</text>
+            <!-- Marriage -->
+            <line x1="108" y1="15" x2="134" y2="15" stroke="#8b1a1a" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <circle cx="95" cy="15" r="11" fill="#8b1a1a"/>
+            <text x="95" y="19" text-anchor="middle" fill="white" font-size="8" font-family="serif">陈</text>
+            <text x="95" y="36" text-anchor="middle" fill="#6f6657" font-size="9" font-family="serif">陈氏</text>
+            <!-- Elbow connections -->
+            <path d="M150,29 L150,50" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+            <path d="M80,50 L220,50" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+            <path d="M80,50 L80,65" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+            <path d="M150,50 L150,65" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+            <path d="M220,50 L220,65" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+            <!-- Gen 2 -->
+            <circle cx="80" cy="78" r="12" fill="#2c3e50"/>
+            <text x="80" y="82" text-anchor="middle" fill="white" font-size="9" font-family="serif">烈</text>
+            <text x="80" y="99" text-anchor="middle" fill="#2b2622" font-size="10" font-family="serif">树烈</text>
+            <circle cx="150" cy="78" r="12" fill="#2c3e50" stroke="#d4af37" stroke-width="2.5"/>
+            <text x="150" y="82" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="serif">炎</text>
+            <text x="150" y="99" text-anchor="middle" fill="#8b1a1a" font-size="10" font-weight="bold" font-family="serif">树炎 ★</text>
+            <circle cx="220" cy="78" r="12" fill="#2c3e50"/>
+            <text x="220" y="82" text-anchor="middle" fill="white" font-size="9" font-family="serif">森</text>
+            <text x="220" y="99" text-anchor="middle" fill="#2b2622" font-size="10" font-family="serif">树森</text>
+            <!-- Gen 3 from 树炎 -->
+            <path d="M150,90 L150,108" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+            <path d="M115,108 L185,108" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+            <path d="M115,108 L115,120" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+            <path d="M185,108 L185,120" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+            <circle cx="115" cy="132" r="10" fill="#8b1a1a"/>
+            <text x="115" y="136" text-anchor="middle" fill="white" font-size="8" font-family="serif">杨</text>
+            <text x="115" y="150" text-anchor="middle" fill="#2b2622" font-size="9" font-family="serif">熙杨</text>
+            <circle cx="185" cy="132" r="10" fill="#2c3e50"/>
+            <text x="185" y="136" text-anchor="middle" fill="white" font-size="8" font-family="serif">涵</text>
+            <text x="185" y="150" text-anchor="middle" fill="#2b2622" font-size="9" font-family="serif">熙涵</text>
+          </svg>
+        </div>
+        <!-- Color palette -->
+        <div style="display:flex;gap:6px;margin-top:12px;justify-content:center;">
+          <div style="width:24px;height:24px;border-radius:50%;background:#8b1a1a;" title="中国红"></div>
+          <div style="width:24px;height:24px;border-radius:50%;background:#c9a96e;" title="金色"></div>
+          <div style="width:24px;height:24px;border-radius:50%;background:#f5f0eb;border:1px solid #ddd;" title="宣纸色"></div>
+          <div style="width:24px;height:24px;border-radius:50%;background:#2c3e50;" title="墨蓝"></div>
+          <div style="width:24px;height:24px;border-radius:50%;background:#27ae60;" title="在世绿"></div>
+        </div>
+        <div style="text-align:center;margin-top:6px;font-size:10px;color:#a89c87;">宣纸底 · 中国红 · 金色血脉 · 宋体字</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. 传统中国风（推荐）</h3>
+      <p>宣纸色底、中国红导航栏、金色血脉连线、宋体/楷体字体。庄重典雅，有传统家谱的仪式感。长辈看到会觉得"这就是家谱"。</p>
+    </div>
+  </div>
+
+  <!-- Style B: 现代简约 -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#ffffff;padding:24px;border-radius:12px;min-height:280px;position:relative;border:1px solid #e5e7eb;">
+        <!-- Nav bar -->
+        <div style="background:#ffffff;padding:10px 16px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid #e5e7eb;">
+          <span style="color:#111;font-size:16px;font-weight:600;font-family:system-ui;">王氏家族</span>
+          <span style="color:#666;font-size:14px;">Aa 👤 ↻</span>
+        </div>
+        <!-- Tree preview -->
+        <div style="background:#f9fafb;border-radius:8px;padding:20px;text-align:center;">
+          <svg viewBox="0 0 300 160" style="width:100%;">
+            <!-- Gen 1 -->
+            <rect x="130" y="3" width="40" height="24" rx="12" fill="#3b82f6"/>
+            <text x="150" y="19" text-anchor="middle" fill="white" font-size="10" font-family="system-ui">永康</text>
+            <rect x="78" y="3" width="36" height="24" rx="12" fill="#ec4899"/>
+            <text x="96" y="19" text-anchor="middle" fill="white" font-size="10" font-family="system-ui">陈氏</text>
+            <line x1="114" y1="15" x2="130" y2="15" stroke="#d1d5db" stroke-width="1.5"/>
+            <!-- Connections -->
+            <path d="M150,27 L150,45" stroke="#d1d5db" stroke-width="1.5" fill="none"/>
+            <path d="M80,45 L220,45" stroke="#d1d5db" stroke-width="1.5" fill="none"/>
+            <path d="M80,45 L80,58" stroke="#d1d5db" stroke-width="1.5" fill="none"/>
+            <path d="M150,45 L150,58" stroke="#d1d5db" stroke-width="1.5" fill="none"/>
+            <path d="M220,45 L220,58" stroke="#d1d5db" stroke-width="1.5" fill="none"/>
+            <!-- Gen 2 -->
+            <rect x="62" y="58" width="36" height="24" rx="12" fill="#3b82f6"/>
+            <text x="80" y="74" text-anchor="middle" fill="white" font-size="10" font-family="system-ui">树烈</text>
+            <rect x="130" y="56" width="40" height="26" rx="13" fill="#3b82f6" stroke="#3b82f6" stroke-width="2"/>
+            <text x="150" y="73" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="system-ui">树炎</text>
+            <rect x="202" y="58" width="36" height="24" rx="12" fill="#3b82f6"/>
+            <text x="220" y="74" text-anchor="middle" fill="white" font-size="10" font-family="system-ui">树森</text>
+            <!-- Gen 3 -->
+            <path d="M150,82 L150,100" stroke="#d1d5db" stroke-width="1.5" fill="none"/>
+            <path d="M115,100 L185,100" stroke="#d1d5db" stroke-width="1.5" fill="none"/>
+            <path d="M115,100 L115,113" stroke="#d1d5db" stroke-width="1.5" fill="none"/>
+            <path d="M185,100 L185,113" stroke="#d1d5db" stroke-width="1.5" fill="none"/>
+            <rect x="97" y="113" width="36" height="24" rx="12" fill="#ec4899"/>
+            <text x="115" y="129" text-anchor="middle" fill="white" font-size="10" font-family="system-ui">熙杨</text>
+            <rect x="167" y="113" width="36" height="24" rx="12" fill="#3b82f6"/>
+            <text x="185" y="129" text-anchor="middle" fill="white" font-size="10" font-family="system-ui">熙涵</text>
+          </svg>
+        </div>
+        <!-- Color palette -->
+        <div style="display:flex;gap:6px;margin-top:12px;justify-content:center;">
+          <div style="width:24px;height:24px;border-radius:50%;background:#3b82f6;"></div>
+          <div style="width:24px;height:24px;border-radius:50%;background:#ec4899;"></div>
+          <div style="width:24px;height:24px;border-radius:50%;background:#ffffff;border:1px solid #ddd;"></div>
+          <div style="width:24px;height:24px;border-radius:50%;background:#111;"></div>
+          <div style="width:24px;height:24px;border-radius:50%;background:#10b981;"></div>
+        </div>
+        <div style="text-align:center;margin-top:6px;font-size:10px;color:#9ca3af;">白底 · 蓝粉性别色 · 胶囊标签 · 系统字体</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. 现代简约</h3>
+      <p>纯白底、蓝色/粉色区分性别、胶囊形成员标签、系统字体。干净现代，但缺少"家谱"的仪式感和文化辨识度。</p>
+    </div>
+  </div>
+
+  <!-- Style C: 复古水墨 -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#f0ebe0;padding:24px;border-radius:12px;min-height:280px;position:relative;overflow:hidden;">
+        <!-- Ink wash background hint -->
+        <div style="position:absolute;top:0;right:0;width:120px;height:120px;background:radial-gradient(circle,rgba(139,26,26,0.03) 0%,transparent 70%);border-radius:50%;"></div>
+        <!-- Nav bar -->
+        <div style="background:transparent;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid rgba(139,26,26,0.15);">
+          <span style="color:#5c3a1e;font-size:18px;font-weight:bold;font-family:serif;letter-spacing:5px;">王氏家谱</span>
+          <span style="color:#8b6914;font-size:14px;">字号 · 身份 · 退出</span>
+        </div>
+        <!-- Tree preview -->
+        <div style="background:rgba(255,255,255,0.4);border-radius:4px;padding:20px;text-align:center;border:1px solid rgba(139,26,26,0.08);">
+          <svg viewBox="0 0 300 150" style="width:100%;">
+            <!-- Gen 1 -->
+            <rect x="125" y="2" width="50" height="28" rx="3" fill="none" stroke="#5c3a1e" stroke-width="1.5"/>
+            <text x="150" y="21" text-anchor="middle" fill="#5c3a1e" font-size="13" font-weight="bold" font-family="serif">永康</text>
+            <!-- Marriage -->
+            <line x1="100" y1="16" x2="125" y2="16" stroke="#8b6914" stroke-width="1" stroke-dasharray="3 2"/>
+            <rect x="62" y="4" width="38" height="24" rx="3" fill="none" stroke="#8b6914" stroke-width="1"/>
+            <text x="81" y="20" text-anchor="middle" fill="#8b6914" font-size="11" font-family="serif">陈氏</text>
+            <!-- Connections - brush-like -->
+            <path d="M150,30 L150,48" stroke="#5c3a1e" stroke-width="1.2" fill="none"/>
+            <path d="M80,48 L220,48" stroke="#5c3a1e" stroke-width="1.2" fill="none"/>
+            <path d="M80,48 L80,62" stroke="#5c3a1e" stroke-width="1.2" fill="none"/>
+            <path d="M150,48 L150,62" stroke="#5c3a1e" stroke-width="1.2" fill="none"/>
+            <path d="M220,48 L220,62" stroke="#5c3a1e" stroke-width="1.2" fill="none"/>
+            <!-- Gen 2 -->
+            <rect x="58" y="62" width="44" height="26" rx="3" fill="none" stroke="#5c3a1e" stroke-width="1.2"/>
+            <text x="80" y="79" text-anchor="middle" fill="#5c3a1e" font-size="12" font-family="serif">树烈</text>
+            <rect x="126" y="60" width="48" height="28" rx="3" fill="none" stroke="#8b1a1a" stroke-width="2"/>
+            <text x="150" y="79" text-anchor="middle" fill="#8b1a1a" font-size="13" font-weight="bold" font-family="serif">树炎</text>
+            <rect x="198" y="62" width="44" height="26" rx="3" fill="none" stroke="#5c3a1e" stroke-width="1.2"/>
+            <text x="220" y="79" text-anchor="middle" fill="#5c3a1e" font-size="12" font-family="serif">树森</text>
+            <!-- Gen 3 -->
+            <path d="M150,88 L150,105" stroke="#5c3a1e" stroke-width="1.2" fill="none"/>
+            <path d="M115,105 L185,105" stroke="#5c3a1e" stroke-width="1.2" fill="none"/>
+            <path d="M115,105 L115,118" stroke="#5c3a1e" stroke-width="1.2" fill="none"/>
+            <path d="M185,105 L185,118" stroke="#5c3a1e" stroke-width="1.2" fill="none"/>
+            <rect x="93" y="118" width="44" height="24" rx="3" fill="none" stroke="#8b6914" stroke-width="1"/>
+            <text x="115" y="134" text-anchor="middle" fill="#8b6914" font-size="11" font-family="serif">熙杨</text>
+            <rect x="163" y="118" width="44" height="24" rx="3" fill="none" stroke="#5c3a1e" stroke-width="1.2"/>
+            <text x="185" y="134" text-anchor="middle" fill="#5c3a1e" font-size="11" font-family="serif">熙涵</text>
+          </svg>
+        </div>
+        <!-- Color palette -->
+        <div style="display:flex;gap:6px;margin-top:12px;justify-content:center;">
+          <div style="width:24px;height:24px;border-radius:50%;background:#5c3a1e;"></div>
+          <div style="width:24px;height:24px;border-radius:50%;background:#8b6914;"></div>
+          <div style="width:24px;height:24px;border-radius:50%;background:#8b1a1a;"></div>
+          <div style="width:24px;height:24px;border-radius:50%;background:#f0ebe0;border:1px solid #ddd;"></div>
+          <div style="width:24px;height:24px;border-radius:50%;background:#2c5f2d;"></div>
+        </div>
+        <div style="text-align:center;margin-top:6px;font-size:10px;color:#a89c87;">水墨底 · 褐色框 · 朱砂高亮 · 楷体字 · 方框节点</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. 复古水墨</h3>
+      <p>仿古宣纸底、褐色方框节点、朱砂色高亮选中者、楷体/宋体字。像翻开一本老族谱，文化感最强。但视觉偏暗沉，年轻一代可能觉得"太旧"。</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:24px;padding:16px;background:rgba(139,26,26,0.05);border-radius:12px;">
+  <h3 style="color:#8b1a1a;">💡 我的推荐：A（传统中国风）</h3>
+  <p style="color:#6f6657;font-size:14px;">理由：目标用户是家族长辈，"一看就知道这是家谱"是第一要务。中国红+金色+宣纸色的组合既有文化辨识度，又不会像纯水墨那样暗沉。圆形节点（而非方框）更适合手机触摸交互。</p>
+</div>

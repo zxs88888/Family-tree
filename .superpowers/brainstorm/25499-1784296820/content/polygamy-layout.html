@@ -1,0 +1,223 @@
+<h2>多配偶布局方案 — 永康（4位妻子，7个子女）</h2>
+<p class="subtitle">这是家族树最复杂的布局场景。每位妻子的子女归属必须一目了然。以下是 3 种处理方式。</p>
+
+<div class="cards">
+  <!-- Option A: 妻子横排，子女跟随母亲 -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#faf6ef;padding:16px;border-radius:12px;">
+        <svg viewBox="0 0 440 320" style="width:100%;">
+          <!-- Gen 1: 永康 centered, 4 wives to the side -->
+          <text x="8" y="18" font-size="10" fill="#a89c87" font-family="serif">一世</text>
+
+          <!-- 永康 node -->
+          <circle cx="220" cy="22" r="18" fill="#2c3e50" stroke="#c9a96e" stroke-width="2"/>
+          <text x="220" y="27" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="serif">永康</text>
+          <text x="220" y="50" text-anchor="middle" fill="#6f6657" font-size="9" font-family="serif">1903-1970</text>
+
+          <!-- Marriage lines to 4 wives -->
+          <line x1="202" y1="22" x2="175" y2="22" stroke="#8b1a1a" stroke-width="1.2" stroke-dasharray="4 3"/>
+          <line x1="238" y1="22" x2="265" y2="22" stroke="#8b1a1a" stroke-width="1.2" stroke-dasharray="4 3"/>
+          <line x1="202" y1="15" x2="175" y2="-10" stroke="#8b1a1a" stroke-width="1.2" stroke-dasharray="4 3" opacity="0"/>
+
+          <!-- 陈氏 -->
+          <circle cx="155" cy="22" r="14" fill="#8b1a1a"/>
+          <text x="155" y="26" text-anchor="middle" fill="white" font-size="10" font-family="serif">陈氏</text>
+
+          <!-- 唐氏 -->
+          <circle cx="105" cy="22" r="14" fill="#8b1a1a"/>
+          <text x="105" y="26" text-anchor="middle" fill="white" font-size="10" font-family="serif">唐氏</text>
+          <line x1="141" y1="22" x2="119" y2="22" stroke="#8b1a1a" stroke-width="1.2" stroke-dasharray="4 3"/>
+
+          <!-- 徐氏 -->
+          <circle cx="285" cy="22" r="14" fill="#8b1a1a"/>
+          <text x="285" y="26" text-anchor="middle" fill="white" font-size="10" font-family="serif">徐氏</text>
+
+          <!-- 肖氏 -->
+          <circle cx="335" cy="22" r="14" fill="#8b1a1a"/>
+          <text x="335" y="26" text-anchor="middle" fill="white" font-size="10" font-family="serif">肖氏</text>
+          <line x1="299" y1="22" x2="321" y2="22" stroke="#8b1a1a" stroke-width="1.2" stroke-dasharray="4 3"/>
+
+          <!-- Trunk line down from 永康 -->
+          <path d="M220,40 L220,70" stroke="#c9bba0" stroke-width="1.8" fill="none"/>
+
+          <!-- Gen 2 horizontal bus -->
+          <path d="M60,70 L380,70" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+
+          <text x="8" y="100" font-size="10" fill="#a89c87" font-family="serif">二世</text>
+
+          <!-- Children drop lines from bus, grouped by mother -->
+          <!-- 陈氏 → 树烈 -->
+          <path d="M105,70 L105,95" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+          <circle cx="105" cy="108" r="13" fill="#2c3e50"/>
+          <text x="105" y="112" text-anchor="middle" fill="white" font-size="10" font-family="serif">烈</text>
+          <text x="105" y="130" text-anchor="middle" fill="#2b2622" font-size="10" font-family="serif">树烈</text>
+          <!-- Mother label -->
+          <text x="105" y="143" text-anchor="middle" fill="#a89c87" font-size="8" font-family="serif">陈氏出</text>
+
+          <!-- 唐氏 → 树达 -->
+          <path d="M190,70 L190,95" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+          <circle cx="190" cy="108" r="13" fill="#2c3e50"/>
+          <text x="190" y="112" text-anchor="middle" fill="white" font-size="10" font-family="serif">达</text>
+          <text x="190" y="130" text-anchor="middle" fill="#2b2622" font-size="10" font-family="serif">树达</text>
+          <text x="190" y="143" text-anchor="middle" fill="#a89c87" font-size="8" font-family="serif">唐氏出</text>
+
+          <!-- 徐氏 → 树陆, 树炎 -->
+          <path d="M275,70 L275,85" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+          <path d="M252,85 L298,85" stroke="#c9bba0" stroke-width="1.2" fill="none"/>
+          <path d="M252,85 L252,95" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+          <path d="M298,85 L298,95" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+          <circle cx="252" cy="108" r="13" fill="#2c3e50"/>
+          <text x="252" y="112" text-anchor="middle" fill="white" font-size="10" font-family="serif">陆</text>
+          <text x="252" y="130" text-anchor="middle" fill="#2b2622" font-size="10" font-family="serif">树陆</text>
+          <circle cx="298" cy="108" r="13" fill="#2c3e50" stroke="#d4af37" stroke-width="2"/>
+          <text x="298" y="112" text-anchor="middle" fill="white" font-size="10" font-family="serif">炎</text>
+          <text x="298" y="130" text-anchor="middle" fill="#8b1a1a" font-size="10" font-weight="bold" font-family="serif">树炎 ★</text>
+          <text x="275" y="143" text-anchor="middle" fill="#a89c87" font-size="8" font-family="serif">徐氏出</text>
+
+          <!-- 肖氏 → 树艺, 树牧, 树森 -->
+          <path d="M370,70 L370,85" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+          <path d="M340,85 L400,85" stroke="#c9bba0" stroke-width="1.2" fill="none"/>
+          <path d="M340,85 L340,95" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+          <path d="M370,85 L370,95" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+          <path d="M400,85 L400,95" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+          <circle cx="340" cy="108" r="11" fill="#8b1a1a"/>
+          <text x="340" y="112" text-anchor="middle" fill="white" font-size="9" font-family="serif">艺</text>
+          <text x="340" y="128" text-anchor="middle" fill="#2b2622" font-size="9" font-family="serif">树艺</text>
+          <circle cx="370" cy="108" r="11" fill="#2c3e50"/>
+          <text x="370" y="112" text-anchor="middle" fill="white" font-size="9" font-family="serif">牧</text>
+          <text x="370" y="128" text-anchor="middle" fill="#2b2622" font-size="9" font-family="serif">树牧</text>
+          <circle cx="400" cy="108" r="11" fill="#2c3e50"/>
+          <text x="400" y="112" text-anchor="middle" fill="white" font-size="9" font-family="serif">森</text>
+          <text x="400" y="128" text-anchor="middle" fill="#2b2622" font-size="9" font-family="serif">树森</text>
+          <text x="370" y="143" text-anchor="middle" fill="#a89c87" font-size="8" font-family="serif">肖氏出</text>
+
+          <!-- Grouping backgrounds -->
+          <rect x="90" y="60" width="30" height="90" rx="6" fill="rgba(139,26,26,0.03)" stroke="none"/>
+          <rect x="175" y="60" width="30" height="90" rx="6" fill="rgba(139,26,26,0.03)" stroke="none"/>
+          <rect x="237" y="60" width="76" height="90" rx="6" fill="rgba(139,26,26,0.05)" stroke="none"/>
+          <rect x="325" y="60" width="90" height="90" rx="6" fill="rgba(139,26,26,0.03)" stroke="none"/>
+
+          <!-- Gen 3 (from 树炎) -->
+          <text x="8" y="175" font-size="10" fill="#a89c87" font-family="serif">三世</text>
+          <path d="M298,120 L298,158" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+          <path d="M272,158 L324,158" stroke="#c9bba0" stroke-width="1.2" fill="none"/>
+          <path d="M272,158 L272,170" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+          <path d="M324,158 L324,170" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+          <circle cx="272" cy="183" r="11" fill="#8b1a1a"/>
+          <text x="272" y="187" text-anchor="middle" fill="white" font-size="9" font-family="serif">杨</text>
+          <text x="272" y="202" text-anchor="middle" fill="#2b2622" font-size="9" font-family="serif">熙杨</text>
+          <circle cx="324" cy="183" r="11" fill="#2c3e50"/>
+          <text x="324" y="187" text-anchor="middle" fill="white" font-size="9" font-family="serif">涵</text>
+          <text x="324" y="202" text-anchor="middle" fill="#2b2622" font-size="9" font-family="serif">熙涵</text>
+
+          <!-- Gen 4 -->
+          <text x="8" y="235" font-size="10" fill="#a89c87" font-family="serif">四世</text>
+          <path d="M324,195 L324,228" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+          <path d="M300,228 L348,228" stroke="#c9bba0" stroke-width="1.2" fill="none"/>
+          <path d="M300,228 L300,240" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+          <path d="M348,228 L348,240" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+          <circle cx="300" cy="253" r="10" fill="#8b1a1a"/>
+          <text x="300" y="257" text-anchor="middle" fill="white" font-size="8" font-family="serif">君</text>
+          <text x="300" y="272" text-anchor="middle" fill="#2b2622" font-size="8" font-family="serif">舜君</text>
+          <circle cx="348" cy="253" r="10" fill="#8b1a1a"/>
+          <text x="348" y="257" text-anchor="middle" fill="white" font-size="8" font-family="serif">珵</text>
+          <text x="348" y="272" text-anchor="middle" fill="#2b2622" font-size="8" font-family="serif">舜珵</text>
+        </svg>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. 子女分组跟随母亲（推荐）</h3>
+      <p>永康居中，4位妻子左右排列。第二代子女按母亲分组，每组下方标注"X氏出"。淡色背景区分不同母系。关系一目了然，适合多配偶场景。</p>
+    </div>
+  </div>
+
+  <!-- Option B: 主配偶线 + 副配偶折叠 -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#faf6ef;padding:16px;border-radius:12px;">
+        <svg viewBox="0 0 440 240" style="width:100%;">
+          <!-- 永康 center -->
+          <circle cx="220" cy="25" r="18" fill="#2c3e50" stroke="#c9a96e" stroke-width="2"/>
+          <text x="220" y="30" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="serif">永康</text>
+
+          <!-- Main wife: 陈氏 (first wife, left) -->
+          <line x1="202" y1="25" x2="170" y2="25" stroke="#8b1a1a" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <circle cx="155" cy="25" r="14" fill="#8b1a1a"/>
+          <text x="155" y="29" text-anchor="middle" fill="white" font-size="10" font-family="serif">陈氏</text>
+
+          <!-- Other wives shown as compact pills -->
+          <rect x="250" y="14" width="42" height="22" rx="11" fill="none" stroke="#8b1a1a" stroke-width="1" stroke-dasharray="3 2"/>
+          <text x="271" y="29" text-anchor="middle" fill="#8b1a1a" font-size="9" font-family="serif">唐氏</text>
+          <rect x="298" y="14" width="42" height="22" rx="11" fill="none" stroke="#8b1a1a" stroke-width="1" stroke-dasharray="3 2"/>
+          <text x="319" y="29" text-anchor="middle" fill="#8b1a1a" font-size="9" font-family="serif">徐氏</text>
+          <rect x="346" y="14" width="42" height="22" rx="11" fill="none" stroke="#8b1a1a" stroke-width="1" stroke-dasharray="3 2"/>
+          <text x="367" y="29" text-anchor="middle" fill="#8b1a1a" font-size="9" font-family="serif">肖氏</text>
+
+          <!-- Trunk down -->
+          <path d="M220,43 L220,65" stroke="#c9bba0" stroke-width="1.8" fill="none"/>
+
+          <!-- Gen 2: ALL children on one horizontal line -->
+          <path d="M60,65 L380,65" stroke="#c9bba0" stroke-width="1.5" fill="none"/>
+
+          <!-- 7 children equally spaced -->
+          <path d="M80,65 L80,85" stroke="#c9bba0" stroke-width="1.2" fill="none"/>
+          <circle cx="80" cy="97" r="12" fill="#2c3e50"/>
+          <text x="80" y="101" text-anchor="middle" fill="white" font-size="9" font-family="serif">烈</text>
+          <text x="80" y="117" text-anchor="middle" fill="#2b2622" font-size="9" font-family="serif">树烈</text>
+          <text x="80" y="128" text-anchor="middle" fill="#a89c87" font-size="7" font-family="serif">陈氏出</text>
+
+          <path d="M130,65 L130,85" stroke="#c9bba0" stroke-width="1.2" fill="none"/>
+          <circle cx="130" cy="97" r="12" fill="#2c3e50"/>
+          <text x="130" y="101" text-anchor="middle" fill="white" font-size="9" font-family="serif">达</text>
+          <text x="130" y="117" text-anchor="middle" fill="#2b2622" font-size="9" font-family="serif">树达</text>
+          <text x="130" y="128" text-anchor="middle" fill="#a89c87" font-size="7" font-family="serif">唐氏出</text>
+
+          <path d="M185,65 L185,85" stroke="#c9bba0" stroke-width="1.2" fill="none"/>
+          <circle cx="185" cy="97" r="12" fill="#2c3e50"/>
+          <text x="185" y="101" text-anchor="middle" fill="white" font-size="9" font-family="serif">陆</text>
+          <text x="185" y="117" text-anchor="middle" fill="#2b2622" font-size="9" font-family="serif">树陆</text>
+          <text x="185" y="128" text-anchor="middle" fill="#a89c87" font-size="7" font-family="serif">徐氏出</text>
+
+          <path d="M240,65 L240,85" stroke="#c9bba0" stroke-width="1.2" fill="none"/>
+          <circle cx="240" cy="97" r="12" fill="#2c3e50" stroke="#d4af37" stroke-width="2"/>
+          <text x="240" y="101" text-anchor="middle" fill="white" font-size="9" font-family="serif">炎</text>
+          <text x="240" y="117" text-anchor="middle" fill="#8b1a1a" font-size="9" font-weight="bold" font-family="serif">树炎 ★</text>
+          <text x="240" y="128" text-anchor="middle" fill="#a89c87" font-size="7" font-family="serif">徐氏出</text>
+
+          <path d="M295,65 L295,85" stroke="#c9bba0" stroke-width="1.2" fill="none"/>
+          <circle cx="295" cy="97" r="11" fill="#8b1a1a"/>
+          <text x="295" y="101" text-anchor="middle" fill="white" font-size="9" font-family="serif">艺</text>
+          <text x="295" y="117" text-anchor="middle" fill="#2b2622" font-size="9" font-family="serif">树艺</text>
+          <text x="295" y="128" text-anchor="middle" fill="#a89c87" font-size="7" font-family="serif">肖氏出</text>
+
+          <path d="M345,65 L345,85" stroke="#c9bba0" stroke-width="1.2" fill="none"/>
+          <circle cx="345" cy="97" r="11" fill="#2c3e50"/>
+          <text x="345" y="101" text-anchor="middle" fill="white" font-size="9" font-family="serif">牧</text>
+          <text x="345" y="117" text-anchor="middle" fill="#2b2622" font-size="9" font-family="serif">树牧</text>
+          <text x="345" y="128" text-anchor="middle" fill="#a89c87" font-size="7" font-family="serif">肖氏出</text>
+
+          <path d="M395,65 L395,85" stroke="#c9bba0" stroke-width="1.2" fill="none"/>
+          <circle cx="395" cy="97" r="11" fill="#2c3e50"/>
+          <text x="395" y="101" text-anchor="middle" fill="white" font-size="9" font-family="serif">森</text>
+          <text x="395" y="117" text-anchor="middle" fill="#2b2622" font-size="9" font-family="serif">树森</text>
+          <text x="395" y="128" text-anchor="middle" fill="#a89c87" font-size="7" font-family="serif">肖氏出</text>
+        </svg>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. 子女平铺 + 标注母亲</h3>
+      <p>所有妻子排列在永康两侧，所有子女平铺在同一行，每人下方标注"X氏出"。布局最紧凑，但同母子女的归属感不如分组明显。</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:24px;padding:16px;background:rgba(139,26,26,0.05);border-radius:12px;">
+  <h3 style="color:#8b1a1a;">💡 我的推荐：A（子女分组跟随母亲）</h3>
+  <p style="color:#6f6657;font-size:14px;">
+    <strong>理由</strong>：永康有 4 位妻子、7 个子女，最关键的信息是"谁是谁的孩子"。方案 A 把同母子女归为一组，用淡色背景区分，一目了然。方案 B 虽然更紧凑，但 7 个孩子平铺在一起，需要逐个看标注才能知道亲缘关系。
+  </p>
+  <p style="color:#6f6657;font-size:14px;">
+    <strong>布局算法核心思路</strong>：每个"家庭单元"（父+母+子女）递归计算宽度。永康节点宽度 = 所有妻子单元宽度之和。妻子下方挂载她的子女子树。
+  </p>
+</div>

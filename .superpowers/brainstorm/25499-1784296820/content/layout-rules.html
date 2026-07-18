@@ -1,0 +1,128 @@
+<h2>最终布局方案 — 两条核心规则</h2>
+<p class="subtitle">解决"全是虚线分不清"和"配偶像支线"的问题。全部使用实线，粗线=婚姻，细线=亲子。</p>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">规则一：多妻家庭</div>
+    <div class="mockup-body" style="background:#faf6ef;">
+      <svg viewBox="0 0 280 200" style="width:100%;">
+        <text x="140" y="14" text-anchor="middle" font-size="9" fill="#a89c87" font-family="serif">丈夫居中，妻子并排两侧</text>
+        <text x="140" y="26" text-anchor="middle" font-size="8" fill="#8b1a1a" font-family="serif">子女挂在每位母亲正下方</text>
+        <!-- Wife A -->
+        <circle cx="50" cy="55" r="14" fill="#8b1a1a"/>
+        <text x="50" y="59" text-anchor="middle" fill="white" font-size="9" font-weight="bold">妻A</text>
+        <text x="50" y="76" text-anchor="middle" fill="#8b6914" font-size="7">元配</text>
+        <!-- Marriage line (THICK solid red) -->
+        <line x1="64" y1="55" x2="116" y2="55" stroke="#8b1a1a" stroke-width="3"/>
+        <!-- Husband -->
+        <circle cx="140" cy="55" r="18" fill="#2c3e50" stroke="#c9a96e" stroke-width="2"/>
+        <text x="140" y="60" text-anchor="middle" fill="white" font-size="11" font-weight="bold">丈夫</text>
+        <!-- Marriage line -->
+        <line x1="158" y1="55" x2="206" y2="55" stroke="#8b1a1a" stroke-width="3"/>
+        <!-- Wife B -->
+        <circle cx="220" cy="55" r="14" fill="#8b1a1a"/>
+        <text x="220" y="59" text-anchor="middle" fill="white" font-size="9" font-weight="bold">妻B</text>
+        <text x="220" y="76" text-anchor="middle" fill="#8b6914" font-size="7">继配</text>
+
+        <!-- Parent-child lines (thinner, gray-brown, SOLID) -->
+        <line x1="50" y1="69" x2="50" y2="100" stroke="#c9bba0" stroke-width="2"/>
+        <line x1="220" y1="69" x2="220" y2="95" stroke="#c9bba0" stroke-width="2"/>
+        <line x1="200" y1="95" x2="240" y2="95" stroke="#c9bba0" stroke-width="1.5"/>
+        <line x1="200" y1="95" x2="200" y2="100" stroke="#c9bba0" stroke-width="1.5"/>
+        <line x1="240" y1="95" x2="240" y2="100" stroke="#c9bba0" stroke-width="1.5"/>
+
+        <!-- Children under wife A -->
+        <circle cx="50" cy="115" r="12" fill="#2c3e50"/>
+        <text x="50" y="119" text-anchor="middle" fill="white" font-size="9">子1</text>
+        <text x="50" y="135" text-anchor="middle" fill="#6f6657" font-size="7">妻A之子</text>
+
+        <!-- Children under wife B -->
+        <circle cx="200" cy="115" r="12" fill="#2c3e50"/>
+        <text x="200" y="119" text-anchor="middle" fill="white" font-size="9">子2</text>
+        <circle cx="240" cy="115" r="12" fill="#8b1a1a"/>
+        <text x="240" y="119" text-anchor="middle" fill="white" font-size="9">女3</text>
+        <text x="220" y="135" text-anchor="middle" fill="#6f6657" font-size="7">妻B之二孩</text>
+
+        <!-- Legend -->
+        <line x1="30" y1="160" x2="70" y2="160" stroke="#8b1a1a" stroke-width="3"/>
+        <text x="78" y="164" font-size="8" fill="#6f6657">粗红线 = 婚姻</text>
+        <line x1="30" y1="178" x2="70" y2="178" stroke="#c9bba0" stroke-width="2"/>
+        <text x="78" y="182" font-size="8" fill="#6f6657">细棕线 = 亲子</text>
+        <text x="140" y="196" text-anchor="middle" font-size="7" fill="#a89c87">无虚线，一目了然</text>
+      </svg>
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">规则二：单妻家庭</div>
+    <div class="mockup-body" style="background:#faf6ef;">
+      <svg viewBox="0 0 280 200" style="width:100%;">
+        <text x="140" y="14" text-anchor="middle" font-size="9" fill="#a89c87" font-family="serif">夫妻并排，实线连接</text>
+        <text x="140" y="26" text-anchor="middle" font-size="8" fill="#8b1a1a" font-family="serif">子女从夫妻连线中点垂直向下</text>
+        <!-- Husband -->
+        <circle cx="110" cy="60" r="16" fill="#2c3e50"/>
+        <text x="110" y="64" text-anchor="middle" fill="white" font-size="10" font-weight="bold">丈夫</text>
+        <!-- Marriage line (THICK solid red) -->
+        <line x1="126" y1="60" x2="154" y2="60" stroke="#8b1a1a" stroke-width="3"/>
+        <!-- Wife -->
+        <circle cx="170" cy="60" r="14" fill="#8b1a1a"/>
+        <text x="170" y="64" text-anchor="middle" fill="white" font-size="9" font-weight="bold">妻子</text>
+
+        <!-- Midpoint marker -->
+        <circle cx="140" cy="60" r="2.5" fill="#8b1a1a"/>
+        <!-- Parent-child from midpoint (SOLID) -->
+        <line x1="140" y1="63" x2="140" y2="95" stroke="#c9bba0" stroke-width="2"/>
+        <line x1="115" y1="95" x2="165" y2="95" stroke="#c9bba0" stroke-width="1.5"/>
+        <line x1="115" y1="95" x2="115" y2="105" stroke="#c9bba0" stroke-width="1.5"/>
+        <line x1="140" y1="95" x2="140" y2="105" stroke="#c9bba0" stroke-width="1.5"/>
+        <line x1="165" y1="95" x2="165" y2="105" stroke="#c9bba0" stroke-width="1.5"/>
+
+        <!-- Children from midpoint -->
+        <circle cx="115" cy="120" r="12" fill="#2c3e50"/>
+        <text x="115" y="124" text-anchor="middle" fill="white" font-size="9">子1</text>
+        <circle cx="140" cy="120" r="12" fill="#2c3e50"/>
+        <text x="140" y="124" text-anchor="middle" fill="white" font-size="9">子2</text>
+        <circle cx="165" cy="120" r="12" fill="#8b1a1a"/>
+        <text x="165" y="124" text-anchor="middle" fill="white" font-size="9">女3</text>
+        <text x="140" y="145" text-anchor="middle" font-size="8" fill="#6f6657">子女从夫妻中间向下展开</text>
+
+        <!-- Key difference callout -->
+        <rect x="30" y="155" width="220" height="35" rx="6" fill="rgba(139,26,26,0.06)" stroke="#d4af37" stroke-width="0.8"/>
+        <text x="140" y="172" text-anchor="middle" font-size="8" fill="#8b1a1a" font-weight="bold">关键区别：子女代表"双亲共同"的后代</text>
+        <text x="140" y="185" text-anchor="middle" font-size="8" fill="#6f6657">而非只属于某一方</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:20px;padding:16px;background:rgba(139,26,26,0.05);border-radius:12px;">
+  <h3 style="color:#8b1a1a;">💡 方案总结</h3>
+  <table style="width:100%;font-size:13px;color:#6f6657;border-collapse:collapse;">
+    <tr style="border-bottom:1px solid #e8dfcc;">
+      <td style="padding:6px;font-weight:bold;color:#2b2622;">连线类型</td>
+      <td style="padding:6px;">粗实红线 (3px)</td>
+      <td style="padding:6px;">婚姻连接</td>
+      <td style="padding:6px;">夫妻并排</td>
+    </tr>
+    <tr style="border-bottom:1px solid #e8dfcc;">
+      <td style="padding:6px;font-weight:bold;color:#2b2622;">亲子线</td>
+      <td style="padding:6px;">细实棕线 (2px)</td>
+      <td style="padding:6px;">父母→子女</td>
+      <td style="padding:6px;">垂直向下</td>
+    </tr>
+    <tr style="border-bottom:1px solid #e8dfcc;">
+      <td style="padding:6px;font-weight:bold;color:#2b2622;">多妻子女</td>
+      <td style="padding:6px;">挂在母亲正下方</td>
+      <td style="padding:6px;">母子归属清晰</td>
+      <td style="padding:6px;">同母分组</td>
+    </tr>
+    <tr>
+      <td style="padding:6px;font-weight:bold;color:#2b2622;">单妻子女</td>
+      <td style="padding:6px;">挂在夫妻中点下方</td>
+      <td style="padding:6px;">双亲共同</td>
+      <td style="padding:6px;">居中展开</td>
+    </tr>
+  </table>
+  <p style="color:#6f6657;font-size:13px;margin-top:10px;">
+    <strong>全部实线，无虚线</strong>。粗红 = 婚姻，细棕 = 亲子，两种线一眼可分。
+  </p>
+</div>

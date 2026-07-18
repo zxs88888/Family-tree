@@ -1,0 +1,175 @@
+<h2>复杂布局：多妻 + 兄弟姐妹如何共存</h2>
+<p class="subtitle">假设永康有父母和两个亲兄弟。核心原则：兄弟并排挂在父母下方，每位兄弟的"家庭宽度"独立计算。</p>
+
+<div class="cards">
+  <div class="card" style="cursor:default;">
+    <div class="card-image">
+      <div style="background:#faf6ef;padding:12px;border-radius:12px;">
+        <svg viewBox="0 0 580 380" style="width:100%;">
+          <!-- Gen bands -->
+          <rect x="0" y="0" width="580" height="65" fill="rgba(232,223,204,0.2)" rx="4"/>
+          <rect x="0" y="70" width="580" height="55" fill="rgba(232,223,204,0.1)" rx="4"/>
+          <rect x="0" y="130" width="580" height="55" fill="rgba(232,223,204,0.2)" rx="4"/>
+          <rect x="0" y="190" width="580" height="180" fill="rgba(232,223,204,0.1)" rx="4"/>
+
+          <text x="8" y="16" font-size="10" fill="#a89c87" font-weight="600" font-family="serif">祖辈</text>
+          <text x="8" y="86" font-size="10" fill="#a89c87" font-weight="600" font-family="serif">父辈</text>
+          <text x="8" y="146" font-size="10" fill="#a89c87" font-weight="600" font-family="serif">兄弟辈</text>
+          <text x="8" y="206" font-size="10" fill="#a89c87" font-weight="600" font-family="serif">子辈</text>
+
+          <!-- ====== Grandparents ====== -->
+          <!-- Grandfather -->
+          <circle cx="260" cy="30" r="16" fill="#2c3e50"/>
+          <text x="260" y="34" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="serif">祖父</text>
+          <!-- Marriage line -->
+          <line x1="276" y1="30" x2="304" y2="30" stroke="#8b1a1a" stroke-width="3"/>
+          <!-- Grandmother -->
+          <circle cx="320" cy="30" r="14" fill="#8b1a1a"/>
+          <text x="320" y="34" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="serif">祖母</text>
+
+          <!-- Parent-child: from midpoint of grandparents down to sibling bus -->
+          <!-- Midpoint of marriage line: (260+320)/2 = 290 -->
+          <line x1="290" y1="44" x2="290" y2="68" stroke="#c9bba0" stroke-width="2"/>
+          <!-- Horizontal sibling bus -->
+          <line x1="80" y1="68" x2="500" y2="68" stroke="#c9bba0" stroke-width="1.5"/>
+          <!-- Drop to each brother -->
+          <line x1="80" y1="68" x2="80" y2="80" stroke="#c9bba0" stroke-width="1.5"/>
+          <line x1="290" y1="68" x2="290" y2="80" stroke="#c9bba0" stroke-width="1.5"/>
+          <line x1="500" y1="68" x2="500" y2="80" stroke="#c9bba0" stroke-width="1.5"/>
+
+          <!-- ====== Brother generation ====== -->
+          <!-- 兄弟A (simple, no wife shown) -->
+          <circle cx="80" cy="97" r="14" fill="#2c3e50"/>
+          <text x="80" y="101" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="serif">兄A</text>
+          <text x="80" y="118" text-anchor="middle" fill="#2b2622" font-size="9" font-family="serif">永康兄</text>
+          <!-- Width indicator -->
+          <line x1="50" y1="125" x2="110" y2="125" stroke="#c9a96e" stroke-width="0.8" stroke-dasharray="2 2"/>
+          <text x="80" y="135" text-anchor="middle" fill="#c9a96e" font-size="7" font-family="serif">宽度 = 自身</text>
+
+          <!-- 永康 (center, with 4 wives) -->
+          <!-- Wives: 陈氏(210) — 唐氏(250) — [永康](290) — 徐氏(335) — 肖氏(380) -->
+          <circle cx="210" cy="97" r="12" fill="#8b1a1a"/>
+          <text x="210" y="101" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="serif">陈氏</text>
+          <line x1="222" y1="97" x2="260" y2="97" stroke="#8b1a1a" stroke-width="2.5"/>
+          <circle cx="250" cy="97" r="12" fill="#8b1a1a"/>
+          <text x="250" y="101" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="serif">唐氏</text>
+          <line x1="262" y1="97" x2="270" y2="97" stroke="#8b1a1a" stroke-width="2.5"/>
+
+          <circle cx="290" cy="97" r="16" fill="#2c3e50" stroke="#c9a96e" stroke-width="2"/>
+          <text x="290" y="101" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="serif">永康</text>
+
+          <line x1="306" y1="97" x2="320" y2="97" stroke="#8b1a1a" stroke-width="2.5"/>
+          <circle cx="335" cy="97" r="12" fill="#8b1a1a"/>
+          <text x="335" y="101" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="serif">徐氏</text>
+          <line x1="347" y1="97" x2="365" y2="97" stroke="#8b1a1a" stroke-width="2.5"/>
+          <circle cx="380" cy="97" r="12" fill="#8b1a1a"/>
+          <text x="380" y="101" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="serif">肖氏</text>
+
+          <!-- Width indicator for 永康's family -->
+          <line x1="195" y1="125" x2="395" y2="125" stroke="#c9a96e" stroke-width="0.8" stroke-dasharray="2 2"/>
+          <text x="290" y="135" text-anchor="middle" fill="#c9a96e" font-size="7" font-family="serif">宽度 = 全部妻子+子女的总宽度</text>
+
+          <!-- 兄弟B (simple, with one wife) -->
+          <circle cx="485" cy="97" r="14" fill="#2c3e50"/>
+          <text x="485" y="101" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="serif">兄B</text>
+          <line x1="499" y1="97" x2="513" y2="97" stroke="#8b1a1a" stroke-width="2.5"/>
+          <circle cx="525" cy="97" r="12" fill="#8b1a1a"/>
+          <text x="525" y="101" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="serif">嫂</text>
+          <line x1="195" y1="125" x2="395" y2="125" stroke="#c9a96e" stroke-width="0.8" stroke-dasharray="2 2"/>
+
+          <!-- Width indicator for 兄B -->
+          <line x1="460" y1="125" x2="545" y2="125" stroke="#c9a96e" stroke-width="0.8" stroke-dasharray="2 2"/>
+          <text x="500" y="135" text-anchor="middle" fill="#c9a96e" font-size="7" font-family="serif">宽度 = 夫妻+子女</text>
+
+          <!-- ====== Children under 永康's wives ====== -->
+          <!-- Parent-child from each wife down -->
+          <line x1="210" y1="109" x2="210" y2="155" stroke="#c9bba0" stroke-width="2"/>
+          <line x1="250" y1="109" x2="250" y2="155" stroke="#c9bba0" stroke-width="2"/>
+
+          <line x1="335" y1="109" x2="335" y2="148" stroke="#c9bba0" stroke-width="2"/>
+          <line x1="315" y1="148" x2="355" y2="148" stroke="#c9bba0" stroke-width="1.5"/>
+          <line x1="315" y1="148" x2="315" y2="155" stroke="#c9bba0" stroke-width="1.5"/>
+          <line x1="355" y1="148" x2="355" y2="155" stroke="#c9bba0" stroke-width="1.5"/>
+
+          <line x1="380" y1="109" x2="380" y2="148" stroke="#c9bba0" stroke-width="2"/>
+          <line x1="365" y1="148" x2="398" y2="148" stroke="#c9bba0" stroke-width="1.5"/>
+          <line x1="365" y1="148" x2="365" y2="155" stroke="#c9bba0" stroke-width="1.5"/>
+          <line x1="382" y1="148" x2="382" y2="155" stroke="#c9bba0" stroke-width="1.5"/>
+          <line x1="398" y1="148" x2="398" y2="155" stroke="#c9bba0" stroke-width="1.5"/>
+
+          <!-- Children nodes -->
+          <circle cx="210" cy="170" r="11" fill="#2c3e50"/>
+          <text x="210" y="174" text-anchor="middle" fill="white" font-size="8" font-weight="bold">烈</text>
+          <text x="210" y="188" text-anchor="middle" fill="#2b2622" font-size="8">树烈</text>
+
+          <circle cx="250" cy="170" r="11" fill="#2c3e50"/>
+          <text x="250" y="174" text-anchor="middle" fill="white" font-size="8" font-weight="bold">达</text>
+          <text x="250" y="188" text-anchor="middle" fill="#2b2622" font-size="8">树达</text>
+
+          <circle cx="315" cy="170" r="10" fill="#2c3e50"/>
+          <text x="315" y="174" text-anchor="middle" fill="white" font-size="8">陆</text>
+          <text x="315" y="188" text-anchor="middle" fill="#2b2622" font-size="8">树陆</text>
+
+          <circle cx="355" cy="170" r="11" fill="#2c3e50" stroke="#d4af37" stroke-width="2"/>
+          <text x="355" y="174" text-anchor="middle" fill="white" font-size="8" font-weight="bold">炎</text>
+          <text x="355" y="188" text-anchor="middle" fill="#8b1a1a" font-size="8" font-weight="bold">树炎★</text>
+
+          <circle cx="365" cy="170" r="8" fill="#8b1a1a"/>
+          <text x="365" y="173" text-anchor="middle" fill="white" font-size="6">艺</text>
+
+          <circle cx="382" cy="170" r="8" fill="#2c3e50"/>
+          <text x="382" y="173" text-anchor="middle" fill="white" font-size="6">牧</text>
+
+          <circle cx="398" cy="170" r="8" fill="#2c3e50"/>
+          <text x="398" y="173" text-anchor="middle" fill="white" font-size="6">森</text>
+
+          <!-- Children under 兄A (from midpoint - monogamous or no wife) -->
+          <line x1="80" y1="111" x2="80" y2="155" stroke="#c9bba0" stroke-width="2"/>
+          <circle cx="80" cy="170" r="10" fill="#2c3e50"/>
+          <text x="80" y="174" text-anchor="middle" fill="white" font-size="8">X</text>
+          <text x="80" y="188" text-anchor="middle" fill="#2b2622" font-size="8">侄子</text>
+
+          <!-- Children under 兄B+嫂 (from midpoint of couple) -->
+          <!-- Midpoint of 兄B(485) and 嫂(525) = 505 -->
+          <line x1="505" y1="109" x2="505" y2="148" stroke="#c9bba0" stroke-width="2"/>
+          <line x1="490" y1="148" x2="520" y2="148" stroke="#c9bba0" stroke-width="1.5"/>
+          <line x1="490" y1="148" x2="490" y2="155" stroke="#c9bba0" stroke-width="1.5"/>
+          <line x1="520" y1="148" x2="520" y2="155" stroke="#c9bba0" stroke-width="1.5"/>
+          <circle cx="490" cy="170" r="10" fill="#2c3e50"/>
+          <text x="490" y="174" text-anchor="middle" fill="white" font-size="8">Y</text>
+          <text x="490" y="188" text-anchor="middle" fill="#2b2622" font-size="8">侄子</text>
+          <circle cx="520" cy="170" r="10" fill="#8b1a1a"/>
+          <text x="520" y="174" text-anchor="middle" fill="white" font-size="8">Z</text>
+          <text x="520" y="188" text-anchor="middle" fill="#2b2622" font-size="8">侄女</text>
+
+          <!-- Key annotation: sibling spacing -->
+          <rect x="120" y="220" width="340" height="65" rx="8" fill="white" stroke="#e8dfcc"/>
+          <text x="290" y="240" text-anchor="middle" font-size="10" fill="#8b1a1a" font-weight="bold" font-family="serif">布局算法核心</text>
+          <text x="290" y="258" text-anchor="middle" font-size="9" fill="#6f6657" font-family="serif">每个兄弟的"列宽" = 其家庭子树的最大宽度</text>
+          <text x="290" y="275" text-anchor="middle" font-size="9" fill="#6f6657" font-family="serif">永康列宽最大（4妻7子），兄弟列宽较小</text>
+
+          <!-- Width arrows -->
+          <text x="80" y="200" text-anchor="middle" font-size="7" fill="#c9a96e">▲ 窄</text>
+          <text x="290" y="200" text-anchor="middle" font-size="7" fill="#c9a96e">▲ 最宽</text>
+          <text x="505" y="200" text-anchor="middle" font-size="7" fill="#c9a96e">▲ 中宽</text>
+
+          <!-- Summary -->
+          <rect x="50" y="300" width="480" height="70" rx="8" fill="rgba(139,26,26,0.04)" stroke="#d4af37" stroke-width="0.8"/>
+          <text x="290" y="320" text-anchor="middle" font-size="10" fill="#8b1a1a" font-weight="bold" font-family="serif">递归应用同一条规则</text>
+          <text x="290" y="338" text-anchor="middle" font-size="9" fill="#6f6657" font-family="serif">祖辈夫妻并排 → 子女从中间下来 → 兄弟并排</text>
+          <text x="290" y="354" text-anchor="middle" font-size="9" fill="#6f6657" font-family="serif">每位兄弟独立展开自己的家庭（妻子并排 → 子女挂下方）</text>
+          <text x="290" y="368" text-anchor="middle" font-size="9" fill="#c9a96e" font-family="serif">无论嵌套多少代，规则始终一致</text>
+        </svg>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>兄弟 + 多妻共存方案</h3>
+      <p>
+        <strong>核心思路</strong>：每个兄弟是一个"列"，列宽 = 他家庭子树的最大宽度。<br>
+        永康列最宽（4妻7子），兄弟列窄（1妻或无妻）。<br>
+        兄弟并排挂在父母的子女横线上，互不干扰。<br>
+        <strong>递归规则</strong>：每一代都适用同一条规则 — 夫妻并排 → 子女向下 → 多妻分母亲挂。
+      </p>
+    </div>
+  </div>
+</div>
