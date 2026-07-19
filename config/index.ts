@@ -39,6 +39,8 @@ export default {
   h5: {
     publicPath: '/',
     staticDirectory: 'static',
+    router: { mode: 'hash' },
+    esnextModules: ['taro-ui-vue3'],
     postcss: {
       autoprefixer: { enable: true, config: {} },
       cssModules: {
