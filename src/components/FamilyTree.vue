@@ -3,8 +3,9 @@
     <svg
       :viewBox="`0 0 ${layout.viewBox.width} ${layout.viewBox.height}`"
       style="width:100%;min-width:680px;"
+      stroke-linecap="round"
+      stroke-linejoin="round"
     >
-      <style>line,path{stroke-linecap:round;stroke-linejoin:round}</style>
 
       <!-- Generation bands -->
       <rect
