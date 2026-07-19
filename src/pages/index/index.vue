@@ -1,8 +1,9 @@
 <template>
   <view class="page">
     <AccessCodeModal v-if="uiStore.showAccessModal" />
-    <view v-else class="tree-container">
-      <text class="placeholder">家族树将在这里显示</text>
+    <view v-else class="main">
+      <FamilyTree />
+      <MemberDrawer />
     </view>
   </view>
 </template>
@@ -12,6 +13,8 @@ import { onMounted } from 'vue'
 import { useFamilyStore } from '@/stores/familyStore'
 import { useUiStore } from '@/stores/uiStore'
 import AccessCodeModal from '@/components/AccessCodeModal.vue'
+import FamilyTree from '@/components/FamilyTree.vue'
+import MemberDrawer from '@/components/MemberDrawer.vue'
 
 const familyStore = useFamilyStore()
 const uiStore = useUiStore()
@@ -25,22 +28,9 @@ onMounted(() => {
 .page {
   min-height: 100vh;
   background: #faf6ef;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.tree-container {
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.placeholder {
-  font-size: 16px;
-  color: #a89c87;
-  font-family: serif;
+.main {
+  position: relative;
 }
 </style>
