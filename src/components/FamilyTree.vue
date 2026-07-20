@@ -9,7 +9,7 @@ import { computed } from 'vue'
 import { useFamilyStore } from '@/stores/familyStore'
 import { useUiStore } from '@/stores/uiStore'
 import { useTreeLayout } from '@/composables/useTreeLayout'
-import { COLORS, SIZES, GEN_LABELS } from '@/utils/constants'
+import { SIZES, GEN_LABELS } from '@/utils/constants'
 import type { LayoutNode } from '@/utils/treeTypes'
 
 const familyStore = useFamilyStore()
@@ -36,75 +36,122 @@ const genBands = computed(() => {
   return bands
 })
 
-// Build SVG as raw HTML string to bypass Taro's template compiler
-// (Taro transforms <text> to taro-text-core which breaks SVG)
 const svgHtml = computed(() => {
   const L = layout.value
-  const parts: string[] = []
+  const p: string[] = []
 
-  parts.push(`<svg viewBox="0 0 ${L.viewBox.width} ${L.viewBox.height}" style="width:100%;min-width:680px;" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">`)
+  p.push(`<svg viewBox="0 0 ${L.viewBox.width} ${L.viewBox.height}" style="width:100%;min-width:680px;" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">`)
 
-  // Generation bands
+  // ── Defs: gradients, shadows, filters ──
+  p.push(`<defs>`)
+  // Male gradient (deep blue)
+  p.push(`<radialGradient id="gMale" cx="35%" cy="30%" r="70%">
+    <stop offset="0%" stop-color="#4a6fa5"/>
+    <stop offset="100%" stop-color="#2c3e50"/>
+  </radialGradient>`)
+  // Female gradient (warm red)
+  p.push(`<radialGradient id="gFemale" cx="35%" cy="30%" r="70%">
+    <stop offset="0%" stop-color="#c0564f"/>
+    <stop offset="100%" stop-color="#8b1a1a"/>
+  </radialGradient>`)
+  // Root highlight gradient (gold)
+  p.push(`<radialGradient id="gRoot" cx="35%" cy="30%" r="70%">
+    <stop offset="0%" stop-color="#5a7faa"/>
+    <stop offset="100%" stop-color="#2c3e50"/>
+  </radialGradient>`)
+  // Drop shadow filter
+  p.push(`<filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+    <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#2b2622" flood-opacity="0.15"/>
+  </filter>`)
+  // Glow filter for selected
+  p.push(`<filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="3" result="blur"/>
+    <feFlood flood-color="#c9a96e" flood-opacity="0.6"/>
+    <feComposite in2="blur" operator="in"/>
+    <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>`)
+  p.push(`</defs>`)
+
+  // ── Generation bands (subtle, elegant) ──
   for (let i = 0; i < genBands.value.length; i++) {
     const b = genBands.value[i]
-    const fill = i % 2 === 0 ? COLORS.bandBg1 : COLORS.bandBg2
-    parts.push(`<rect x="0" y="${b.y}" width="${L.viewBox.width}" height="${b.h}" fill="${fill}" rx="4"/>`)
+    const fill = i % 2 === 0 ? 'rgba(232,223,204,0.12)' : 'rgba(232,223,204,0.04)'
+    p.push(`<rect x="0" y="${b.y}" width="${L.viewBox.width}" height="${b.h}" fill="${fill}" rx="6"/>`)
     if (GEN_LABELS[i]) {
-      parts.push(`<text x="5" y="${b.y + 13}" fill="${COLORS.textLabel}" font-size="9" font-weight="600" font-family="serif">${GEN_LABELS[i]}</text>`)
+      p.push(`<text x="8" y="${b.y + 14}" fill="#b8a88a" font-size="10" font-weight="600" font-family="'Noto Serif SC',serif" letter-spacing="2">${GEN_LABELS[i]}</text>`)
     }
   }
 
-  // Lines
+  // ── Connection lines (softer, layered) ──
   for (const line of L.lines) {
-    const stroke = line.type === 'marriage' ? COLORS.marriage : COLORS.parentChild
-    const sw = line.type === 'marriage' ? 3 : 1.5
-    parts.push(`<line x1="${line.x1}" y1="${line.y1}" x2="${line.x2}" y2="${line.y2}" stroke="${stroke}" stroke-width="${sw}"/>`)
+    if (line.type === 'marriage') {
+      // Marriage: elegant double-line effect
+      p.push(`<line x1="${line.x1}" y1="${line.y1}" x2="${line.x2}" y2="${line.y2}" stroke="#a83232" stroke-width="3.5" opacity="0.9"/>`)
+      p.push(`<line x1="${line.x1}" y1="${line.y1}" x2="${line.x2}" y2="${line.y2}" stroke="#d4756e" stroke-width="1" opacity="0.5"/>`)
+    } else {
+      // Parent-child: subtle warm line
+      p.push(`<line x1="${line.x1}" y1="${line.y1}" x2="${line.x2}" y2="${line.y2}" stroke="#c9bba0" stroke-width="1.8" opacity="0.85"/>`)
+    }
   }
 
-  // Nodes
+  // ── Nodes (polished with shadows and gradients) ──
   const hasLineage = uiStore.lineagePath.size > 0
   for (const node of L.nodes) {
     const isSelected = uiStore.selectedMemberId === node.id
     const isInLineage = uiStore.lineagePath.has(node.id)
     const dimmed = hasLineage && !isInLineage
-    const opacity = dimmed ? 0.3 : 1
+    const opacity = dimmed ? 0.25 : 1
 
-    const fill = node.gender === 1 ? '#2c3e50' : COLORS.marriage
-    const strokeColor = isSelected || node.isRoot ? COLORS.highlight : 'none'
-    const strokeW = isSelected || node.isRoot ? 2.5 : 0
+    const gradId = node.gender === 1 ? (node.isRoot ? 'gRoot' : 'gMale') : 'gFemale'
+    const r = node.r
 
-    // Circle
-    parts.push(`<g data-id="${node.id}" style="cursor:pointer">`)
-    parts.push(`<circle cx="${node.cx}" cy="${node.cy}" r="${node.r}" fill="${fill}" stroke="${strokeColor}" stroke-width="${strokeW}" opacity="${opacity}"/>`)
+    p.push(`<g data-id="${node.id}" style="cursor:pointer" opacity="${opacity}">`)
+
+    // Shadow circle (behind main circle)
+    if (!dimmed) {
+      p.push(`<circle cx="${node.cx}" cy="${node.cy + 1}" r="${r}" fill="rgba(43,38,34,0.1)" filter="url(#shadow)"/>`)
+    }
+
+    // Main circle with gradient
+    const filter = isSelected ? 'url(#glow)' : ''
+    p.push(`<circle cx="${node.cx}" cy="${node.cy}" r="${r}" fill="url(#${gradId})" ${filter ? `filter="${filter}"` : ''}/>` )
+
+    // Selection ring
+    if (isSelected || node.isRoot) {
+      p.push(`<circle cx="${node.cx}" cy="${node.cy}" r="${r + 2.5}" fill="none" stroke="#c9a96e" stroke-width="2" opacity="0.9"/>`)
+    }
+
+    // Gender indicator: small dot at top
+    const dotColor = node.gender === 1 ? '#7eb3e0' : '#e8a0a0'
+    p.push(`<circle cx="${node.cx}" cy="${node.cy - r + 3}" r="2" fill="${dotColor}" opacity="0.7"/>`)
 
     // Short name inside circle
     const shortName = node.name.length <= 2 ? node.name : node.name.slice(-1)
-    const fontSize = node.isRoot ? 10 : 8
-    parts.push(`<text x="${node.cx}" y="${node.cy + 4}" text-anchor="middle" fill="white" font-size="${fontSize}" font-weight="bold" font-family="serif" opacity="${opacity}">${shortName}</text>`)
+    const fontSize = node.isRoot ? 11 : 9
+    p.push(`<text x="${node.cx}" y="${node.cy + 1}" text-anchor="middle" dominant-baseline="central" fill="white" font-size="${fontSize}" font-weight="bold" font-family="'Noto Serif SC',serif" style="text-shadow:0 1px 2px rgba(0,0,0,0.3)">${shortName}</text>`)
 
-    // Full name below
-    parts.push(`<text x="${node.cx}" y="${node.cy + node.r + 10}" text-anchor="middle" fill="${COLORS.textPrimary}" font-size="7" font-family="serif" opacity="${opacity}">${node.name}</text>`)
+    // Full name below (clearer, larger)
+    p.push(`<text x="${node.cx}" y="${node.cy + r + 11}" text-anchor="middle" fill="#3d3529" font-size="8" font-weight="500" font-family="'Noto Serif SC',serif">${node.name}</text>`)
 
-    // Year text
+    // Year text (subtle)
     const { birthYear, deathYear } = node
     let yearText = ''
-    if (birthYear && deathYear) yearText = `${birthYear}-${deathYear}`
-    else if (birthYear) yearText = `${birthYear}-`
-    else if (deathYear) yearText = `?-${deathYear}`
+    if (birthYear && deathYear) yearText = `${birthYear}–${deathYear}`
+    else if (birthYear) yearText = `${birthYear}–`
+    else if (deathYear) yearText = `?–${deathYear}`
     if (yearText) {
-      parts.push(`<text x="${node.cx}" y="${node.cy + node.r + 19}" text-anchor="middle" fill="${COLORS.textSecondary}" font-size="6" font-family="serif" opacity="${opacity}">${yearText}</text>`)
+      p.push(`<text x="${node.cx}" y="${node.cy + r + 21}" text-anchor="middle" fill="#9a8e7a" font-size="6.5" font-family="'Noto Serif SC',serif">${yearText}</text>`)
     }
 
-    parts.push('</g>')
+    p.push('</g>')
   }
 
-  parts.push('</svg>')
-  return parts.join('')
+  p.push('</svg>')
+  return p.join('')
 })
 
 function handleSvgTap(e: Event) {
   const target = e.target as HTMLElement
-  // Walk up to find the <g> with data-id
   let el: HTMLElement | null = target
   while (el && el.tagName !== 'svg') {
     if (el.dataset?.id) {
@@ -145,10 +192,10 @@ function calcLineage(memberId: string, members: any[]): Set<string> {
   height: calc(100vh - 44px);
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-  background: #faf6ef;
+  background: linear-gradient(180deg, #faf6ef 0%, #f5efe3 100%);
 }
 
 .tree-svg-container {
-  padding: 8px;
+  padding: 12px 8px;
 }
 </style>

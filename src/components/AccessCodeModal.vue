@@ -44,7 +44,8 @@ function handleVerify() {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: linear-gradient(180deg, rgba(43,38,34,0.45) 0%, rgba(43,38,34,0.55) 100%);
+  backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -53,68 +54,85 @@ function handleVerify() {
 
 .modal-card {
   width: 320px;
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 40px 32px;
+  background: linear-gradient(180deg, #fdfbf7 0%, #faf6ef 100%);
+  border-radius: 16px;
+  padding: 44px 32px 36px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 12px 48px rgba(43, 38, 34, 0.2);
+  border: 1px solid rgba(201, 169, 110, 0.2);
 }
 
 .modal-title {
   display: block;
-  font-size: 28px;
+  font-size: 30px;
   font-weight: bold;
   color: #2b2622;
-  font-family: serif;
-  margin-bottom: 8px;
+  font-family: 'Noto Serif SC', serif;
+  margin-bottom: 6px;
+  letter-spacing: 3px;
 }
 
 .modal-subtitle {
   display: block;
-  font-size: 14px;
-  color: #a89c87;
-  font-family: serif;
-  margin-bottom: 28px;
+  font-size: 13px;
+  color: #b8a88a;
+  font-family: 'Noto Serif SC', serif;
+  margin-bottom: 32px;
+  letter-spacing: 1px;
 }
 
 .modal-input {
   width: 100%;
-  height: 44px;
-  border: 1px solid #d4c5a9;
-  border-radius: 8px;
-  padding: 0 14px;
+  height: 48px;
+  border: 1.5px solid rgba(201, 169, 110, 0.4);
+  border-radius: 10px;
+  padding: 0 16px;
   font-size: 16px;
   color: #2b2622;
-  background: #faf6ef;
-  font-family: serif;
-  margin-bottom: 16px;
+  background: rgba(255, 255, 255, 0.6);
+  font-family: 'Noto Serif SC', serif;
+  margin-bottom: 12px;
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-color: #c9a96e;
+    outline: none;
+  }
 }
 
 .modal-error {
   display: block;
   font-size: 13px;
-  color: #cc3333;
-  font-family: serif;
-  margin-bottom: 12px;
+  color: #c0564f;
+  font-family: 'Noto Serif SC', serif;
+  margin-bottom: 10px;
 }
 
 .modal-btn {
   width: 100%;
-  height: 46px;
-  background: #8b1a1a;
-  border-radius: 8px;
+  height: 48px;
+  background: linear-gradient(135deg, #a83232 0%, #8b1a1a 100%);
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 8px;
+  box-shadow: 0 4px 16px rgba(139, 26, 26, 0.25);
+  transition: transform 0.15s, box-shadow 0.15s;
+
+  &:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(139, 26, 26, 0.2);
+  }
 }
 
 .modal-btn-text {
   color: #ffffff;
   font-size: 17px;
   font-weight: bold;
-  font-family: serif;
+  font-family: 'Noto Serif SC', serif;
+  letter-spacing: 2px;
 }
 </style>

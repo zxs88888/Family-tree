@@ -86,7 +86,8 @@ function close() {
   right: 0;
   bottom: 0;
   top: 0;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(43, 38, 34, 0.35);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: flex-end;
   z-index: 100;
@@ -94,49 +95,54 @@ function close() {
 
 .drawer-card {
   width: 100%;
-  background: #faf6ef;
-  border-radius: 16px 16px 0 0;
-  padding: 20px 24px 32px;
-  max-height: 60vh;
+  background: linear-gradient(180deg, #fdfbf7 0%, #faf6ef 100%);
+  border-radius: 20px 20px 0 0;
+  padding: 24px 28px 36px;
+  max-height: 65vh;
   overflow-y: auto;
+  box-shadow: 0 -8px 32px rgba(43, 38, 34, 0.12);
 }
 
 .drawer-header {
   display: flex;
   align-items: baseline;
-  gap: 12px;
-  margin-bottom: 4px;
+  gap: 14px;
+  margin-bottom: 6px;
 }
 
 .drawer-name {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: bold;
   color: #2b2622;
-  font-family: serif;
+  font-family: 'Noto Serif SC', serif;
+  letter-spacing: 1px;
 }
 
 .drawer-years {
   font-size: 14px;
-  color: #6f6657;
-  font-family: serif;
+  color: #9a8e7a;
+  font-family: 'Noto Serif SC', serif;
 }
 
 .drawer-info {
   display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 10px;
+  margin-bottom: 14px;
 }
 
 .drawer-gender, .drawer-deceased {
   font-size: 12px;
-  color: #a89c87;
-  font-family: serif;
+  color: #b8a88a;
+  font-family: 'Noto Serif SC', serif;
+  padding: 2px 8px;
+  background: rgba(232, 223, 204, 0.3);
+  border-radius: 4px;
 }
 
 .drawer-section {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #e8dfcc;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(201, 187, 160, 0.4);
 }
 
 .drawer-label {
@@ -144,35 +150,38 @@ function close() {
   font-size: 13px;
   font-weight: bold;
   color: #8b1a1a;
-  font-family: serif;
-  margin-bottom: 4px;
+  font-family: 'Noto Serif SC', serif;
+  margin-bottom: 6px;
+  letter-spacing: 1px;
 }
 
 .drawer-spouse, .drawer-child {
   display: block;
-  font-size: 14px;
-  color: #2b2622;
-  font-family: serif;
-  line-height: 1.6;
+  font-size: 15px;
+  color: #3d3529;
+  font-family: 'Noto Serif SC', serif;
+  line-height: 1.8;
 }
 
 .drawer-bio {
   display: block;
   font-size: 13px;
   color: #6f6657;
-  font-family: serif;
-  line-height: 1.5;
+  font-family: 'Noto Serif SC', serif;
+  line-height: 1.7;
 }
 
 .drawer-close {
-  margin-top: 16px;
+  margin-top: 20px;
   text-align: center;
-  padding: 8px;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(232, 223, 204, 0.2);
 }
 
 .drawer-close-text {
   font-size: 14px;
-  color: #a89c87;
-  font-family: serif;
+  color: #9a8e7a;
+  font-family: 'Noto Serif SC', serif;
 }
 </style>
