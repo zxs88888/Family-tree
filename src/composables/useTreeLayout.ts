@@ -79,8 +79,10 @@ function calcW(n: PNode): void {
     for (const sg of n.sgs) {
       sg.w = Math.max(R * 2 + GAP, kidsW(sg.kids))
     }
-    const groupsW = n.sgs.reduce((s, sg, i) => s + sg.w + (i ? GAP : 0), 0)
-    n.w = groupsW + n.r * 2 + GAP * 4
+    const halfIdx = Math.ceil(n.sgs.length / 2)
+    const leftW = n.sgs.slice(0, halfIdx).reduce((s, sg, i) => s + sg.w + (i ? GAP : 0), 0)
+    const rightW = n.sgs.slice(halfIdx).reduce((s, sg, i) => s + sg.w + (i ? GAP : 0), 0)
+    n.w = leftW + GAP + n.r * 2 + GAP + rightW + GAP * 2
   } else if (n.ss) {
     n.w = Math.max(n.r * 2 + GAP + R * 2, kidsW(n.skids)) + GAP
   } else if (n.skids.length) {
@@ -145,6 +147,18 @@ function place(n: PNode, left: number): void {
       }
       cursor += sg.w + GAP
     }
+
+    // Post-placement: expand n.w if any node extends beyond allocated width
+    let maxRight = left + n.w
+    const checkNodes = (nodes: PNode[]) => {
+      for (const k of nodes) {
+        maxRight = Math.max(maxRight, k.cx + k.r + GAP)
+        checkNodes(k.skids)
+        for (const sg2 of k.sgs) checkNodes(sg2.kids)
+      }
+    }
+    for (const sg of n.sgs) checkNodes(sg.kids)
+    n.w = Math.max(n.w, maxRight - left)
   } else if (n.ss) {
     const coupleW = n.r * 2 + GAP + R * 2
     const childrenW = kidsW(n.skids)
