@@ -16,7 +16,7 @@ export const SIZES = {
   marriageStroke: 3,
   parentChildStroke: 2,
   genHeight: 55, // 世代间距
-  minEdgeGap: 6, // 最小边缘间距
+  minEdgeGap: 16, // 最小边缘间距（含文字标签空间）
 }
 
 export const GEN_LABELS = ['祖辈', '一世', '二世', '三世', '四世', '五世', '六世']

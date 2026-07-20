@@ -153,6 +153,8 @@ function place(n: PNode, left: number): void {
     const checkNodes = (nodes: PNode[]) => {
       for (const k of nodes) {
         maxRight = Math.max(maxRight, k.cx + k.r + GAP)
+        // Check single spouse position
+        if (k.ss) maxRight = Math.max(maxRight, k.ssCx + R + GAP)
         checkNodes(k.skids)
         for (const sg2 of k.sgs) checkNodes(sg2.kids)
       }

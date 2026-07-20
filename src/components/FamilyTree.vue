@@ -133,16 +133,6 @@ const svgHtml = computed(() => {
     // Full name below (clearer, larger)
     p.push(`<text x="${node.cx}" y="${node.cy + r + 11}" text-anchor="middle" fill="#3d3529" font-size="8" font-weight="500" font-family="'Noto Serif SC',serif">${node.name}</text>`)
 
-    // Year text (subtle)
-    const { birthYear, deathYear } = node
-    let yearText = ''
-    if (birthYear && deathYear) yearText = `${birthYear}–${deathYear}`
-    else if (birthYear) yearText = `${birthYear}–`
-    else if (deathYear) yearText = `?–${deathYear}`
-    if (yearText) {
-      p.push(`<text x="${node.cx}" y="${node.cy + r + 21}" text-anchor="middle" fill="#9a8e7a" font-size="6.5" font-family="'Noto Serif SC',serif">${yearText}</text>`)
-    }
-
     p.push('</g>')
   }
 
