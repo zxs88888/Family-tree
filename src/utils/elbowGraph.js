@@ -235,16 +235,17 @@ export function buildElbowGraph(graphData, allMembers, opts = {}) {
 
   // 婚姻线：同层水平实线（墨米色；属直系脉络时随金）
   allMembers.forEach((m) => {
-    if (m.spouse_id && m.id < m.spouse_id) {
-      const a = nodeById.get(m.id);
-      const b = nodeById.get(m.spouse_id);
-      if (a && b) {
-        edges.push({
-          d: `M ${a.x * S} ${a.y * S} L ${b.x * S} ${b.y * S}`,
-          nodes: [a.id, b.id],
-          kind: "marriage",
-        });
-      }
+    const a = nodeById.get(m.id);
+    const b = m.spouse_id && nodeById.get(m.spouse_id);
+    // 去重：对称夫妻（双方互指 spouse_id）只画一次；非对称关系
+    // （如一夫多妻时仅妻指夫、夫字段留空）也确保恰好画一次——
+    // 只要对方未反向指回本节点，或本节点 id 较小即画。
+    if (a && b && (b.spouse_id !== m.id || m.id < b.id)) {
+      edges.push({
+        d: `M ${a.x * S} ${a.y * S} L ${b.x * S} ${b.y * S}`,
+        nodes: [a.id, b.id],
+        kind: "marriage",
+      });
     }
   });
 
