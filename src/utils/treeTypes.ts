@@ -10,12 +10,25 @@ export interface Member {
   motherId?: string
   spouses: SpouseRelation[]
   children?: Member[]
+  isPlaceholder?: boolean // 占位角色（未记载的配偶）
 }
 
 export interface SpouseRelation {
   spouseId: string
   marriageOrder: number
   marriageType: string // 元配/次配/三配/继配
+}
+
+export interface LifeEvent {
+  id: string
+  memberId: string
+  label: string // 出生/结婚/逝世/入职...
+  title: string
+  yearDisplay: string
+  yearSort?: number
+  location?: string
+  description?: string
+  sortOrder: number
 }
 
 export interface LayoutNode {
@@ -26,6 +39,7 @@ export interface LayoutNode {
   r: number
   gender: 1 | 2
   isRoot?: boolean
+  isPlaceholder?: boolean // 占位角色（未记载的配偶）
   birthYear?: number
   deathYear?: number
 }

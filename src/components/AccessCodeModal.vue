@@ -10,8 +10,8 @@
         type="text"
       />
       <text v-if="error" class="modal-error">访问码错误，请重试</text>
-      <view class="modal-btn" @tap="handleVerify">
-        <text class="modal-btn-text">进入家族</text>
+      <view class="modal-btn" :class="{ 'modal-btn--loading': loading }" @tap="handleVerify">
+        <text class="modal-btn-text">{{ loading ? '验证中...' : '进入家族' }}</text>
       </view>
     </view>
   </view>
@@ -20,20 +20,54 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useUiStore } from '@/stores/uiStore'
-
-const ACCESS_CODE = 'Wang2026'
+import { supabase } from '@/utils/supabase'
 
 const uiStore = useUiStore()
 const code = ref('')
 const error = ref(false)
+const loading = ref(false)
 
-function handleVerify() {
-  if (code.value === ACCESS_CODE) {
-    error.value = false
-    uiStore.authenticate()
-  } else {
-    error.value = true
+async function handleVerify() {
+  if (!code.value.trim() || loading.value) return
+  loading.value = true
+  error.value = false
+
+  try {
+    const { data, error: rpcError } = await supabase.rpc('validate_access_code', {
+      input_code: code.value.trim(),
+    })
+
+    if (rpcError) {
+      // RPC 调用失败（网络问题等），fallback 到本地验证
+      if (code.value.trim() === 'Liao2026') {
+        onAccessGranted()
+        return
+      }
+      error.value = true
+      return
+    }
+
+    if (data === true) {
+      onAccessGranted()
+    } else {
+      error.value = true
+    }
+  } catch {
+    // 网络异常 fallback
+    if (code.value.trim() === 'Liao2026') {
+      onAccessGranted()
+    } else {
+      error.value = true
+    }
+  } finally {
+    loading.value = false
   }
+}
+
+function onAccessGranted() {
+  error.value = false
+  localStorage.setItem('family_access', 'true')
+  uiStore.authenticate()
 }
 </script>
 
@@ -120,11 +154,16 @@ function handleVerify() {
   justify-content: center;
   margin-top: 8px;
   box-shadow: 0 4px 16px rgba(139, 26, 26, 0.25);
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
 
   &:active {
     transform: scale(0.98);
     box-shadow: 0 2px 8px rgba(139, 26, 26, 0.2);
+  }
+
+  &--loading {
+    opacity: 0.7;
+    pointer-events: none;
   }
 }
 

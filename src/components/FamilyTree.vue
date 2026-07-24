@@ -1,6 +1,6 @@
 <template>
   <scroll-view scroll-x scroll-y class="tree-scroll">
-    <div v-html="svgHtml" class="tree-svg-container" @tap="handleSvgTap" />
+    <div v-html="svgHtml" class="tree-svg-container" @click="handleSvgTap" />
   </scroll-view>
 </template>
 
@@ -97,6 +97,16 @@ const svgHtml = computed(() => {
   // ── Nodes (polished with shadows and gradients) ──
   const hasLineage = uiStore.lineagePath.size > 0
   for (const node of L.nodes) {
+    // 占位角色（未记载的配偶）：灰色虚线样式，不可点击
+    if (node.isPlaceholder) {
+      const r = node.r
+      p.push(`<g opacity="0.65">`)
+      p.push(`<circle cx="${node.cx}" cy="${node.cy}" r="${r}" fill="#ece7db" stroke="#b8a88a" stroke-width="1.5" stroke-dasharray="3 2"/>`)
+      p.push(`<text x="${node.cx}" y="${node.cy + 1}" text-anchor="middle" dominant-baseline="central" fill="#a89c87" font-size="9" font-weight="bold" font-family="'Noto Serif SC',serif">?</text>`)
+      p.push(`<text x="${node.cx}" y="${node.cy + r + 11}" text-anchor="middle" fill="#a89c87" font-size="8" font-family="'Noto Serif SC',serif">未记载</text>`)
+      p.push('</g>')
+      continue
+    }
     const isSelected = uiStore.selectedMemberId === node.id
     const isInLineage = uiStore.lineagePath.has(node.id)
     const dimmed = hasLineage && !isInLineage

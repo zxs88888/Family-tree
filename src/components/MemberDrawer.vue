@@ -28,6 +28,27 @@
         <text class="drawer-bio">{{ member.biography }}</text>
       </view>
 
+      <view v-if="events.length" class="drawer-section">
+        <text class="drawer-label">时间线</text>
+        <view class="timeline">
+          <view v-for="(ev, idx) in events" :key="ev.id" class="timeline-item">
+            <view class="timeline-marker">
+              <view class="timeline-dot" />
+              <view v-if="idx < events.length - 1" class="timeline-line" />
+            </view>
+            <view class="timeline-content">
+              <view class="timeline-head">
+                <text class="timeline-year">{{ ev.yearDisplay }}</text>
+                <text class="timeline-label">{{ ev.label }}</text>
+              </view>
+              <text v-if="ev.title && ev.title !== ev.label" class="timeline-title">{{ ev.title }}</text>
+              <text v-if="ev.description" class="timeline-desc">{{ ev.description }}</text>
+              <text v-if="ev.location" class="timeline-loc">📍 {{ ev.location }}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
       <view class="drawer-close" @tap="close">
         <text class="drawer-close-text">关闭</text>
       </view>
@@ -65,6 +86,11 @@ const spouses = computed(() => {
 const children = computed(() => {
   if (!member.value) return []
   return familyStore.getChildrenOf(member.value.id)
+})
+
+const events = computed(() => {
+  if (!member.value) return []
+  return familyStore.getEventsOf?.(member.value.id) ?? []
 })
 
 function getSpouseType(spouseId: string): string {
@@ -169,6 +195,95 @@ function close() {
   color: #6f6657;
   font-family: 'Noto Serif SC', serif;
   line-height: 1.7;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 12px;
+}
+
+.timeline-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 12px;
+}
+
+.timeline-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #8b1a1a;
+  box-shadow: 0 0 0 3px rgba(139, 26, 26, 0.12);
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.timeline-line {
+  width: 1.5px;
+  flex: 1;
+  background: linear-gradient(180deg, rgba(201, 169, 110, 0.5) 0%, rgba(201, 169, 110, 0.2) 100%);
+  margin: 3px 0;
+  min-height: 12px;
+}
+
+.timeline-content {
+  flex: 1;
+  padding-bottom: 16px;
+}
+
+.timeline-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+
+.timeline-year {
+  font-size: 14px;
+  font-weight: bold;
+  color: #8b1a1a;
+  font-family: 'Noto Serif SC', serif;
+}
+
+.timeline-label {
+  font-size: 12px;
+  color: #b8a88a;
+  font-family: 'Noto Serif SC', serif;
+  padding: 1px 6px;
+  background: rgba(232, 223, 204, 0.35);
+  border-radius: 4px;
+}
+
+.timeline-title {
+  display: block;
+  font-size: 13px;
+  color: #3d3529;
+  font-family: 'Noto Serif SC', serif;
+  line-height: 1.6;
+  margin-bottom: 2px;
+}
+
+.timeline-desc {
+  display: block;
+  font-size: 12px;
+  color: #6f6657;
+  font-family: 'Noto Serif SC', serif;
+  line-height: 1.6;
+}
+
+.timeline-loc {
+  display: block;
+  font-size: 11px;
+  color: #a89c87;
+  font-family: 'Noto Serif SC', serif;
+  margin-top: 2px;
 }
 
 .drawer-close {

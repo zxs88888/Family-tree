@@ -2,3 +2,12 @@ node_modules/
 dist/
 .DS_Store
 *.png
+.env
+.env.local
+
+# 临时脚本（Vercel 安装/登录）
+.vercel-tmp/
+
+# 个人家族数据 CSV（隐私，不入库）
+族谱_*.csv
+*.csv

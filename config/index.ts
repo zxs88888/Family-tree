@@ -1,5 +1,8 @@
 import path from 'path'
+import dotenv from 'dotenv'
 import type { UserConfigExport } from '@tarojs/cli'
+
+dotenv.config()
 
 export default {
   projectName: 'family',
@@ -17,7 +20,10 @@ export default {
   alias: {
     '@': path.resolve(__dirname, '..', 'src'),
   },
-  defineConstants: {},
+  defineConstants: {
+    'process.env.TARO_APP_SUPABASE_URL': JSON.stringify(process.env.TARO_APP_SUPABASE_URL || ''),
+    'process.env.TARO_APP_SUPABASE_ANON_KEY': JSON.stringify(process.env.TARO_APP_SUPABASE_ANON_KEY || ''),
+  },
   copy: { patterns: [], options: {} },
   framework: 'vue3',
   compiler: {

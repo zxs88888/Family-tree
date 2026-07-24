@@ -28,13 +28,16 @@ interface PNode {
   cx: number
   cy: number
   ssCx: number
+  spouseSide?: 'left' | 'right' // 配偶排布方向（非独生子女时配偶在外侧）
 }
 
 const byId = (ms: Member[], id: string) => ms.find(m => m.id === id)
-const kidsOfMom = (ms: Member[], dad: string, mom: string) =>
-  ms.filter(m => m.fatherId === dad && m.motherId === mom)
-const kidsOfDad = (ms: Member[], dad: string) =>
-  ms.filter(m => m.fatherId === dad)
+// 夫妻组合的子女：不限性别角色（father/mother 任一匹配两人即可）
+const kidsOfCouple = (ms: Member[], a: string, b: string) =>
+  ms.filter(m => (m.fatherId === a && m.motherId === b) || (m.fatherId === b && m.motherId === a))
+// 单亲的子女：该成员是父亲或母亲
+const kidsOfSingle = (ms: Member[], id: string) =>
+  ms.filter(m => m.fatherId === id || m.motherId === id)
 
 function kidsW(kids: PNode[]): number {
   if (!kids.length) return 0
@@ -47,14 +50,26 @@ function build(m: Member, ms: Member[], gen: number, isRoot: boolean, seen: Set<
   const sps = (m.spouses || []).sort((a, b) => a.marriageOrder - b.marriageOrder)
 
   if (sps.length === 0) {
-    for (const c of kidsOfDad(ms, m.id).filter(c => !seen.has(c.id)))
+    const kids = kidsOfSingle(ms, m.id).filter(c => !seen.has(c.id))
+    if (kids.length > 0) {
+      // 有子女但无配偶：创建“未记载”占位配偶，使子女连线挂到双亲
+      n.ss = {
+        id: m.id + '__placeholder',
+        name: '未记载',
+        gender: m.gender === 1 ? 2 : 1,
+        isAlive: false,
+        spouses: [],
+        isPlaceholder: true,
+      }
+    }
+    for (const c of kids)
       n.skids.push(build(c, ms, gen + 1, false, seen))
   } else if (sps.length === 1) {
     const sp = byId(ms, sps[0].spouseId)
     if (sp && !seen.has(sp.id)) {
       seen.add(sp.id)
       n.ss = sp
-      for (const c of kidsOfMom(ms, m.id, sp.id).filter(c => !seen.has(c.id)))
+      for (const c of kidsOfCouple(ms, m.id, sp.id).filter(c => !seen.has(c.id)))
         n.skids.push(build(c, ms, gen + 1, false, seen))
     }
   } else {
@@ -63,7 +78,7 @@ function build(m: Member, ms: Member[], gen: number, isRoot: boolean, seen: Set<
       if (!sp || seen.has(sp.id)) continue
       seen.add(sp.id)
       const kids: PNode[] = []
-      for (const c of kidsOfMom(ms, m.id, sp.id).filter(c => !seen.has(c.id)))
+      for (const c of kidsOfCouple(ms, m.id, sp.id).filter(c => !seen.has(c.id)))
         kids.push(build(c, ms, gen + 1, false, seen))
       n.sgs.push({ spouse: sp, order: rel.marriageOrder, mtype: rel.marriageType, kids, w: 0, cx: 0 })
     }
@@ -94,9 +109,25 @@ function calcW(n: PNode): void {
 
 function placeKidsCentered(kids: PNode[], centerX: number): void {
   if (!kids.length) return
+  // 已婚独生子女：本人（血亲后代）居中于父母中点，配偶排右侧，使连线直指本人、明确子女身份
+  if (kids.length === 1) {
+    const k = kids[0]
+    if (k.ss) {
+      place(k, centerX + (GAP / 2 + R) - (k.w - GAP) / 2)
+    } else {
+      place(k, centerX - k.w / 2)
+    }
+    return
+  }
   const tw = kidsW(kids)
   let cx = centerX - tw / 2
-  for (const k of kids) {
+  const midIdx = kids.length / 2
+  for (let i = 0; i < kids.length; i++) {
+    const k = kids[i]
+    // 非独生子女：左半侧的子女其配偶排左侧（外侧），右半侧排右侧（外侧）
+    if (k.ss && kids.length > 1) {
+      k.spouseSide = i < midIdx ? 'left' : 'right'
+    }
     place(k, cx)
     cx += k.w + GAP
   }
@@ -166,8 +197,15 @@ function place(n: PNode, left: number): void {
     const childrenW = kidsW(n.skids)
     const totalW = Math.max(coupleW, childrenW)
     const centerX = left + totalW / 2
-    n.cx = centerX - (GAP / 2 + R)
-    n.ssCx = centerX + (GAP / 2 + R)
+    if (n.spouseSide === 'left') {
+      // 配偶在外侧（左），人物在右
+      n.ssCx = centerX - (GAP / 2 + R)
+      n.cx = centerX + (GAP / 2 + R)
+    } else {
+      // 默认：人物在左，配偶在右
+      n.cx = centerX - (GAP / 2 + R)
+      n.ssCx = centerX + (GAP / 2 + R)
+    }
     placeKidsCentered(n.skids, (n.cx + n.ssCx) / 2)
   } else {
     n.cx = left + n.w / 2
@@ -178,7 +216,7 @@ function place(n: PNode, left: number): void {
 function toNodes(n: PNode, out: LayoutNode[]): void {
   out.push({ id: n.m.id, name: n.m.name, cx: n.cx, cy: n.cy, r: n.r, gender: n.m.gender, isRoot: n.root, birthYear: n.m.birthYear, deathYear: n.m.deathYear })
   if (n.ss) {
-    out.push({ id: n.ss.id, name: n.ss.name, cx: n.ssCx, cy: n.cy, r: R, gender: n.ss.gender, birthYear: n.ss.birthYear, deathYear: n.ss.deathYear })
+    out.push({ id: n.ss.id, name: n.ss.name, cx: n.ssCx, cy: n.cy, r: R, gender: n.ss.gender, isPlaceholder: n.ss.isPlaceholder, birthYear: n.ss.birthYear, deathYear: n.ss.deathYear })
   }
   for (const sg of n.sgs) {
     out.push({ id: sg.spouse.id, name: sg.spouse.name, cx: sg.cx, cy: n.cy, r: R, gender: sg.spouse.gender, birthYear: sg.spouse.birthYear, deathYear: sg.spouse.deathYear })
@@ -192,31 +230,68 @@ function toLines(n: PNode, out: LayoutLine[], nodes: LayoutNode[]): void {
 
   if (n.ss) {
     const wN = nodes.find(nd => nd.id === n.ss!.id)!
-    out.push({ x1: nN.cx + nN.r, y1: nN.cy, x2: wN.cx - wN.r, y2: wN.cy, type: 'marriage' })
-    if (n.skids.length) {
-      const midX = (nN.cx + wN.cx) / 2
-      const busY = nN.cy + Math.max(nN.r, wN.r) + 10
-      out.push({ x1: midX, y1: nN.cy, x2: midX, y2: busY, type: 'parent-child' })
-      if (n.skids.length > 1)
-        out.push({ x1: n.skids[0].cx, y1: busY, x2: n.skids[n.skids.length - 1].cx, y2: busY, type: 'parent-child' })
-      for (const k of n.skids)
-        out.push({ x1: k.cx, y1: busY, x2: k.cx, y2: k.cy - k.r, type: 'parent-child' })
-    }
-  }
-
-  for (const sg of n.sgs) {
-    const wN = nodes.find(nd => nd.id === sg.spouse.id)
-    if (!wN) continue
+    // 婚姻线只在两圆边缘之间绘制，需适配配偶在左/右两种方向
     if (wN.cx < nN.cx) {
       out.push({ x1: wN.cx + wN.r, y1: wN.cy, x2: nN.cx - nN.r, y2: nN.cy, type: 'marriage' })
     } else {
       out.push({ x1: nN.cx + nN.r, y1: nN.cy, x2: wN.cx - wN.r, y2: wN.cy, type: 'marriage' })
     }
+    if (n.skids.length) {
+      const midX = (nN.cx + wN.cx) / 2
+      if (n.skids.length === 1 && n.skids[0].ss) {
+        // 已婚独生子女：垂线从父母中点直达子女本人节点顶部，明确指向血亲后代
+        const k = n.skids[0]
+        out.push({ x1: midX, y1: nN.cy, x2: midX, y2: k.cy - k.r, type: 'parent-child' })
+      } else {
+        const busY = nN.cy + Math.max(nN.r, wN.r) + 10
+        out.push({ x1: midX, y1: nN.cy, x2: midX, y2: busY, type: 'parent-child' })
+        // 横线总线连接父中点与所有子女（含未婚独生子女偏移的情况，保证连线不断裂）
+        const kidXs = n.skids.map(k => k.cx)
+        const busLeft = Math.min(midX, ...kidXs)
+        const busRight = Math.max(midX, ...kidXs)
+        if (busRight > busLeft)
+          out.push({ x1: busLeft, y1: busY, x2: busRight, y2: busY, type: 'parent-child' })
+        for (const k of n.skids)
+          out.push({ x1: k.cx, y1: busY, x2: k.cx, y2: k.cy - k.r, type: 'parent-child' })
+      }
+    }
+  }
+
+  // ── 多妻婚姻线：按相邻圆圈逐段连接成链，避免穿过中间妻子圆圈 ──
+  const wifeNodes = n.sgs
+    .map(sg => nodes.find(nd => nd.id === sg.spouse.id))
+    .filter((w): w is LayoutNode => !!w)
+  // 左侧妻子：由内（近夫）到外排序
+  const leftWives = wifeNodes.filter(w => w.cx < nN.cx).sort((a, b) => b.cx - a.cx)
+  // 右侧妻子：由内（近夫）到外排序
+  const rightWives = wifeNodes.filter(w => w.cx > nN.cx).sort((a, b) => a.cx - b.cx)
+
+  // 左链：夫左缘 ← 内妻右缘，内妻左缘 ← 外妻右缘 …
+  let prevRightEdge = nN.cx - nN.r
+  for (const w of leftWives) {
+    out.push({ x1: w.cx + w.r, y1: nN.cy, x2: prevRightEdge, y2: nN.cy, type: 'marriage' })
+    prevRightEdge = w.cx - w.r
+  }
+  // 右链：夫右缘 → 内妻左缘，内妻右缘 → 外妻左缘 …
+  let prevLeftEdge = nN.cx + nN.r
+  for (const w of rightWives) {
+    out.push({ x1: prevLeftEdge, y1: nN.cy, x2: w.cx - w.r, y2: nN.cy, type: 'marriage' })
+    prevLeftEdge = w.cx + w.r
+  }
+
+  // 子女连线（从各妻子正下方垂直展开）
+  for (const sg of n.sgs) {
+    const wN = nodes.find(nd => nd.id === sg.spouse.id)
+    if (!wN) continue
     if (sg.kids.length) {
       const busY = wN.cy + R + 10
       out.push({ x1: wN.cx, y1: wN.cy + R, x2: wN.cx, y2: busY, type: 'parent-child' })
-      if (sg.kids.length > 1)
-        out.push({ x1: sg.kids[0].cx, y1: busY, x2: sg.kids[sg.kids.length - 1].cx, y2: busY, type: 'parent-child' })
+      // 横线总线连接妻子中点与所有子女（含独生子女偏移）
+      const kidXs = sg.kids.map(k => k.cx)
+      const busLeft = Math.min(wN.cx, ...kidXs)
+      const busRight = Math.max(wN.cx, ...kidXs)
+      if (busRight > busLeft)
+        out.push({ x1: busLeft, y1: busY, x2: busRight, y2: busY, type: 'parent-child' })
       for (const k of sg.kids)
         out.push({ x1: k.cx, y1: busY, x2: k.cx, y2: k.cy - k.r, type: 'parent-child' })
     }
@@ -232,7 +307,7 @@ export function useTreeLayout(members: Member[], rootId: string): TreeLayout {
 
   const seen = new Set<string>()
   const siblings = root.fatherId
-    ? kidsOfDad(members, root.fatherId).filter(c => !seen.has(c.id))
+    ? kidsOfSingle(members, root.fatherId).filter(c => !seen.has(c.id))
     : [root]
 
   const sibNodes: PNode[] = []
@@ -244,7 +319,13 @@ export function useTreeLayout(members: Member[], rootId: string): TreeLayout {
   for (const s of sibNodes) calcW(s)
 
   let cursor = GAP
-  for (const s of sibNodes) {
+  const sibMid = sibNodes.length / 2
+  for (let i = 0; i < sibNodes.length; i++) {
+    const s = sibNodes[i]
+    // 非独生子女：根节点的兄弟姐妹也遵循配偶外侧规则
+    if (s.ss && sibNodes.length > 1) {
+      s.spouseSide = i < sibMid ? 'left' : 'right'
+    }
     place(s, cursor)
     cursor += s.w + GAP
   }
