@@ -8,34 +8,29 @@
         </view>
       </view>
 
-      <text class="login-subtitle">输入邮箱接收登录链接（仅管理员邮箱可进入管理）</text>
+      <text class="login-subtitle">使用管理员邮箱和密码登录（仅管理员可进入编辑）</text>
 
-      <template v-if="!sent">
-        <input
-          v-model="email"
-          class="login-input"
-          type="text"
-          placeholder="管理员邮箱"
-          placeholder-class="login-placeholder"
-        />
-        <view class="login-error" v-if="errorMsg">
-          <text class="login-error-text">{{ errorMsg }}</text>
-        </view>
-        <view class="login-send-btn" @tap="sendLink">
-          <text class="login-send-text">{{ sending ? '发送中...' : '发送登录链接' }}</text>
-        </view>
-      </template>
-
-      <template v-else>
-        <view class="login-success">
-          <text class="login-success-icon">✉️</text>
-          <text class="login-success-text">登录链接已发送到 {{ email }}</text>
-          <text class="login-success-hint">请在邮箱中点击链接完成登录，登录后将自动返回本页面</text>
-        </view>
-        <view class="login-resend" @tap="sendLink">
-          <text class="login-resend-text">{{ sending ? '发送中...' : '重新发送' }}</text>
-        </view>
-      </template>
+      <input
+        v-model="email"
+        class="login-input"
+        type="text"
+        placeholder="管理员邮箱"
+        placeholder-class="login-placeholder"
+      />
+      <input
+        v-model="password"
+        class="login-input login-input--mt"
+        type="password"
+        password
+        placeholder="密码"
+        placeholder-class="login-placeholder"
+      />
+      <view class="login-error" v-if="errorMsg">
+        <text class="login-error-text">{{ errorMsg }}</text>
+      </view>
+      <view class="login-send-btn" @tap="doLogin">
+        <text class="login-send-text">{{ loading ? '登录中...' : '登 录' }}</text>
+      </view>
     </view>
   </view>
 </template>
@@ -44,32 +39,33 @@
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
 
-const emit = defineEmits<{ (e: 'close'): void }>()
+const emit = defineEmits<{ (e: 'close'): void; (e: 'loggedIn'): void }>()
 
 const authStore = useAuthStore()
 const email = ref('')
-const sent = ref(false)
-const sending = ref(false)
+const password = ref('')
+const loading = ref(false)
 const errorMsg = ref('')
 
-async function sendLink() {
+async function doLogin() {
   const addr = email.value.trim()
   if (!addr) {
     errorMsg.value = '请输入邮箱地址'
     return
   }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(addr)) {
-    errorMsg.value = '邮箱格式不正确'
+  if (!password.value) {
+    errorMsg.value = '请输入密码'
     return
   }
-  sending.value = true
+  loading.value = true
   errorMsg.value = ''
-  const res = await authStore.login(addr)
-  sending.value = false
+  const res = await authStore.login(addr, password.value)
+  loading.value = false
   if (res.success) {
-    sent.value = true
+    emit('loggedIn')
+    emit('close')
   } else {
-    errorMsg.value = res.error || '发送失败，请重试'
+    errorMsg.value = res.error || '登录失败，请重试'
   }
 }
 
@@ -147,6 +143,10 @@ function close() {
   font-size: 14px;
   color: #2b2622;
   font-family: 'Noto Serif SC', serif;
+
+  &--mt {
+    margin-top: 10px;
+  }
 }
 
 .login-placeholder {

@@ -1,11 +1,11 @@
 <template>
-  <!-- 未登录：管理员入口（右下角小按钮） -->
+  <!-- 未登录：管理员入口（右下角小按钮，用于登录；开发模式下也可用于登录后测试写入） -->
   <view v-if="!authStore.isAdmin && !authStore.isInitializing" class="admin-entry" @tap="showLogin = true">
     <text class="admin-entry-text">管</text>
   </view>
 
-  <!-- 已登录管理员：底部工具栏 -->
-  <view v-else-if="authStore.isAdmin" class="admin-toolbar">
+  <!-- 可编辑时：底部工具栏（开发模式恒显示；生产模式需管理员登录） -->
+  <view v-if="authStore.canEdit" class="admin-toolbar">
     <view class="admin-toolbar-inner">
       <view class="admin-toolbar-btn" @tap="showImport = true">
         <text class="admin-toolbar-btn-text">导入 CSV</text>

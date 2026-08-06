@@ -34,18 +34,18 @@
           <view class="photo-row">
             <view v-for="ph in mediaList" :key="ph.id" class="photo-item" @tap="viewPhoto(ph)">
               <image class="photo-img" :src="ph.mediaUrl" mode="aspectFill" />
-              <view v-if="authStore.isAdmin" class="photo-del" @tap.stop="deletePhoto(ph)">
+              <view v-if="authStore.canEdit" class="photo-del" @tap.stop="deletePhoto(ph)">
                 <text class="photo-del-text">✕</text>
               </view>
             </view>
-            <view v-if="authStore.isAdmin" class="photo-add" @tap="pickPhoto">
+            <view v-if="authStore.canEdit" class="photo-add" @tap="pickPhoto">
               <text class="photo-add-text">+</text>
             </view>
           </view>
         </scroll-view>
       </view>
 
-      <view v-else-if="authStore.isAdmin" class="drawer-section">
+      <view v-else-if="authStore.canEdit" class="drawer-section">
         <text class="drawer-label">照片</text>
         <view class="photo-add photo-add--empty" @tap="pickPhoto">
           <text class="photo-add-text">+ 上传照片</text>
@@ -76,7 +76,7 @@
       </view>
 
       <view class="drawer-actions">
-        <view v-if="authStore.isAdmin" class="drawer-edit-btn" @tap="openEdit">
+        <view v-if="authStore.canEdit" class="drawer-edit-btn" @tap="openEdit">
           <text class="drawer-edit-text">编辑</text>
         </view>
         <view class="drawer-close" @tap="close">
