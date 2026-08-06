@@ -6,9 +6,19 @@ import { supabase } from '@/utils/supabase'
 import { mapDbMember, mapDbSpouses } from '@/utils/dbMapper'
 import type { DbMemberRow, DbSpouseRow } from '@/utils/dbMapper'
 
+export interface MemberMedia {
+  id: string
+  memberId: string
+  mediaUrl: string
+  mediaType: string
+  caption?: string
+  sortOrder: number
+}
+
 export const useFamilyStore = defineStore('family', () => {
   const members = ref<Member[]>([])
   const lifeEvents = ref<LifeEvent[]>([])
+  const mediaList = ref<MemberMedia[]>([])
   const isLoaded = ref(false)
   const isLoading = ref(false)
   const loadError = ref<string | null>(null)
@@ -74,6 +84,23 @@ export const useFamilyStore = defineStore('family', () => {
         sortOrder: row.sort_order ?? 0,
       }))
 
+      // 4.5 查询所有媒体（照片）
+      const { data: mediaRows, error: mediaError } = await supabase
+        .from('member_media')
+        .select('*')
+        .order('sort_order', { ascending: true })
+
+      if (mediaError) throw new Error(mediaError.message)
+
+      mediaList.value = ((mediaRows as any[]) || []).map(row => ({
+        id: row.id,
+        memberId: row.member_id,
+        mediaUrl: row.media_url,
+        mediaType: row.media_type || 'image',
+        caption: row.caption ?? undefined,
+        sortOrder: row.sort_order ?? 0,
+      }))
+
       // 5. 映射为前端数据结构
       const mappedMembers = (memberRows as DbMemberRow[]).map(mapDbMember)
       mapDbSpouses(spouseRows as DbSpouseRow[], mappedMembers)
@@ -119,9 +146,14 @@ export const useFamilyStore = defineStore('family', () => {
     return lifeEvents.value.filter(e => e.memberId === memberId)
   }
 
+  function getMediaOf(memberId: string): MemberMedia[] {
+    return mediaList.value.filter(m => m.memberId === memberId)
+  }
+
   return {
     members,
     lifeEvents,
+    mediaList,
     isLoaded,
     isLoading,
     loadError,
@@ -133,5 +165,6 @@ export const useFamilyStore = defineStore('family', () => {
     getChildrenOf,
     getSpousesOf,
     getEventsOf,
+    getMediaOf,
   }
 })
