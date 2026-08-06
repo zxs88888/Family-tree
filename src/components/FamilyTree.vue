@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch, nextTick } from 'vue'
 import { useFamilyStore } from '@/stores/familyStore'
 import { useUiStore } from '@/stores/uiStore'
 import { useTreeLayout } from '@/composables/useTreeLayout'
@@ -14,6 +14,27 @@ import type { LayoutNode } from '@/utils/treeTypes'
 
 const familyStore = useFamilyStore()
 const uiStore = useUiStore()
+
+// 搜索定位：监听到 focusRequest 后滚动到目标节点并选中高亮
+watch(
+  () => uiStore.focusRequest,
+  async req => {
+    if (!req) return
+    await nextTick()
+    const el = document.getElementById(`node-${req.memberId}`)
+    if (el) {
+      try {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
+      } catch {
+        el.scrollIntoView()
+      }
+      // 同步选中并高亮脉系
+      uiStore.selectMember(req.memberId)
+      const path = calcLineage(req.memberId, familyStore.members)
+      uiStore.setLineagePath(path)
+    }
+  },
+)
 
 const layout = computed(() => {
   const root = familyStore.rootMember
@@ -115,7 +136,7 @@ const svgHtml = computed(() => {
     const gradId = node.gender === 1 ? (node.isRoot ? 'gRoot' : 'gMale') : 'gFemale'
     const r = node.r
 
-    p.push(`<g data-id="${node.id}" style="cursor:pointer" opacity="${opacity}">`)
+    p.push(`<g data-id="${node.id}" id="node-${node.id}" style="cursor:pointer" opacity="${opacity}">`)
 
     // Shadow circle (behind main circle)
     if (!dimmed) {

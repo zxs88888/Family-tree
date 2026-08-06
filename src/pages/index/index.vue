@@ -12,6 +12,7 @@
       <template v-else>
         <FamilyTree />
         <MemberDrawer />
+        <SearchPanel />
         <AdminToolbar />
       </template>
 
@@ -31,6 +32,7 @@ import { useAuthStore } from '@/stores/authStore'
 import AccessCodeModal from '@/components/AccessCodeModal.vue'
 import FamilyTree from '@/components/FamilyTree.vue'
 import MemberDrawer from '@/components/MemberDrawer.vue'
+import SearchPanel from '@/components/SearchPanel.vue'
 import AdminToolbar from '@/components/AdminToolbar.vue'
 
 const familyStore = useFamilyStore()

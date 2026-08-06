@@ -49,20 +49,38 @@
         </view>
       </view>
 
-      <view class="drawer-close" @tap="close">
-        <text class="drawer-close-text">关闭</text>
+      <view class="drawer-actions">
+        <view v-if="authStore.isAdmin" class="drawer-edit-btn" @tap="openEdit">
+          <text class="drawer-edit-text">编辑</text>
+        </view>
+        <view class="drawer-close" @tap="close">
+          <text class="drawer-close-text">关闭</text>
+        </view>
       </view>
     </view>
   </view>
+
+  <!-- 编辑成员弹窗 -->
+  <MemberEditModal
+    v-if="showEdit"
+    :member-id="member?.id ?? null"
+    @close="showEdit = false"
+    @saved="handleSaved"
+  />
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useFamilyStore } from '@/stores/familyStore'
 import { useUiStore } from '@/stores/uiStore'
+import { useAuthStore } from '@/stores/authStore'
+import MemberEditModal from '@/components/MemberEditModal.vue'
 
 const familyStore = useFamilyStore()
 const uiStore = useUiStore()
+const authStore = useAuthStore()
+
+const showEdit = ref(false)
 
 const member = computed(() => {
   if (!uiStore.selectedMemberId) return null
@@ -102,6 +120,15 @@ function getSpouseType(spouseId: string): string {
 function close() {
   uiStore.selectMember(null)
   uiStore.setLineagePath(new Set())
+}
+
+function openEdit() {
+  showEdit.value = true
+}
+
+async function handleSaved() {
+  showEdit.value = false
+  await familyStore.loadFromDatabase()
 }
 </script>
 
@@ -292,6 +319,32 @@ function close() {
   padding: 10px;
   border-radius: 8px;
   background: rgba(232, 223, 204, 0.2);
+}
+
+.drawer-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.drawer-actions .drawer-close {
+  flex: 1;
+  margin-top: 0;
+}
+
+.drawer-edit-btn {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #8b1a1a, #a83232);
+}
+
+.drawer-edit-text {
+  font-size: 14px;
+  color: #fff;
+  font-family: 'Noto Serif SC', serif;
+  letter-spacing: 1px;
 }
 
 .drawer-close-text {
