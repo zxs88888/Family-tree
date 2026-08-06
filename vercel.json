@@ -1,5 +1,16 @@
 {
   "installCommand": "npm install --legacy-peer-deps",
   "buildCommand": "npm run build:h5",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "crons": [
+    {
+      "path": "/api/cron",
+      "schedule": "0 3 * * *"
+    }
+  ],
+  "functions": {
+    "api/cron.ts": {
+      "maxDuration": 10
+    }
+  }
 }

@@ -71,23 +71,47 @@ const rows = parseCsvRows(content);
 const header = rows[0]; const hm = new Map(); header.forEach((h, i) => hm.set(h, i));
 const g = n => { const i = hm.get(n); return i !== undefined ? i : -1; };
 
-const members = []; const spouses = []; const events = [];
-const spouseCount = new Map();
+const members = []; const events = [];
+// 配偶关系收集：夫妻双方都在 CSV 中时只算一次（去重），
+// 每人配偶序列按 CSV 行序记录（族谱行序即婚姻先后）
+const genderMap = new Map();
+const pairKeys = new Set();
+const spouseSeq = new Map(); // name -> [spouseName, ...] 按行序
 for (let r = 1; r < rows.length; r++) {
   const row = rows[r];
   const name = row[g('姓名')] || ''; if (!name) continue;
   const gender = row[g('性别')] === '2' ? 2 : 1;
+  genderMap.set(name, gender);
   const birth = row[g('生年')] || ''; const death = row[g('卒年')] || '';
   const bio = row[g('生平简介')] || '';
   members.push({ name, gender, birth_year: birth, death_year: death, is_alive: !death, biography: bio, father_name: row[g('父亲')] || '', mother_name: row[g('母亲')] || '' });
   const spouseName = row[g('配偶')] || '';
   if (spouseName) {
-    const mc = (spouseCount.get(name) || 0) + 1; spouseCount.set(name, mc);
-    const sc = (spouseCount.get(spouseName) || 0) + 1; spouseCount.set(spouseName, sc);
-    spouses.push({ member_name: name, spouse_name: spouseName, marriage_order: mc, marriage_type: mt(mc), reverse_order: sc, reverse_type: mt(sc) });
+    const key = name < spouseName ? `${name}|${spouseName}` : `${spouseName}|${name}`;
+    if (!pairKeys.has(key)) {
+      pairKeys.add(key);
+      if (!spouseSeq.has(name)) spouseSeq.set(name, []);
+      spouseSeq.get(name).push(spouseName);
+      if (!spouseSeq.has(spouseName)) spouseSeq.set(spouseName, []);
+      spouseSeq.get(spouseName).push(name);
+    }
   }
   const evs = parseTimeline(row[g('时间线')] || '');
   evs.forEach((e, i) => events.push({ member_name: name, label: e.label, title: e.title, year_display: String(e.year), year_sort: String(e.year), location: e.location, description: e.description, sort_order: i }));
+}
+
+// 生成配偶记录：每对夫妻只输出一条（member_name=丈夫），
+// marriage_order = 丈夫婚姻序（元配/次配/三配...），双方同序（妻子的身份 = 她是丈夫第几任）
+const spouses = [];
+for (const key of pairKeys) {
+  const [a, b] = key.split('|');
+  let h, w;
+  if (genderMap.get(a) === 1 && genderMap.get(b) !== 1) { h = a; w = b; }
+  else if (genderMap.get(b) === 1 && genderMap.get(a) !== 1) { h = b; w = a; }
+  else { h = a; w = b; } // 性别缺失时以行序先出现者为丈夫
+  const order = (spouseSeq.get(h) || []).indexOf(w) + 1;
+  const t = mt(order);
+  spouses.push({ member_name: h, spouse_name: w, marriage_order: order, marriage_type: t, reverse_order: order, reverse_type: t });
 }
 console.log('成员:', members.length, '配偶关系:', spouses.length, '事件:', events.length);
 
