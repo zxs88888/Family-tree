@@ -4,9 +4,15 @@ import type { User } from '@supabase/supabase-js'
 import { supabase } from '@/utils/supabase'
 
 // 是否强制要求管理员登录才能编辑
-// 开发阶段（.env 设 TARO_APP_REQUIRE_ADMIN=false）放开编辑入口，方便验证；上线设为 true 收紧
-// 注意：无论前端是否放开，数据库 RLS 始终要求真实管理员身份才能写入
-const requireAdminAuth = process.env.TARO_APP_REQUIRE_ADMIN !== 'false'
+// 本地 .env 设 TARO_APP_REQUIRE_ADMIN=false 放开；线上未配置该变量 → 严格
+// 注意：Taro 仅内联构建时已定义的 TARO_APP_* 变量；线上未定义时构建产物保留
+// process.env.XXX 字面量，运行时 process 不存在会报错，用 try/catch 兑底为严格
+let requireAdminAuth = true
+try {
+  requireAdminAuth = process.env.TARO_APP_REQUIRE_ADMIN !== 'false'
+} catch {
+  requireAdminAuth = true
+}
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
