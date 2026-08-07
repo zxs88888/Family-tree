@@ -14,7 +14,7 @@
 
         <view class="form-row">
           <text class="form-label">姓名 *</text>
-          <input v-model="form.name" class="form-input" placeholder="成员姓名" placeholder-class="form-placeholder" />
+          <input v-model="form.name" class="form-input" :maxlength="-1" placeholder="成员姓名" placeholder-class="form-placeholder" />
         </view>
 
         <view class="form-row">
@@ -32,17 +32,17 @@
         <view class="form-row form-row--half">
           <view class="half-item">
             <text class="form-label">生年</text>
-            <input v-model="form.birthYear" class="form-input" type="number" placeholder="如 1944" placeholder-class="form-placeholder" />
+            <input v-model="form.birthYear" class="form-input" :maxlength="-1" type="number" placeholder="如 1944" placeholder-class="form-placeholder" />
           </view>
           <view class="half-item">
             <text class="form-label">卒年</text>
-            <input v-model="form.deathYear" class="form-input" type="number" placeholder="在世留空" placeholder-class="form-placeholder" />
+            <input v-model="form.deathYear" class="form-input" :maxlength="-1" type="number" placeholder="在世留空" placeholder-class="form-placeholder" />
           </view>
         </view>
 
         <view class="form-row">
           <text class="form-label">生平</text>
-          <textarea v-model="form.biography" class="form-textarea" placeholder="成员生平介绍" placeholder-class="form-placeholder" />
+          <textarea v-model="form.biography" class="form-textarea" :maxlength="-1" placeholder="成员生平介绍" placeholder-class="form-placeholder" />
         </view>
 
         <!-- ===== 亲属关系 ===== -->
@@ -123,7 +123,7 @@
           <view class="form-row form-row--half">
             <view class="half-item">
               <text class="form-label">年份 *</text>
-              <input v-model="eventForm.year" class="form-input" type="number" placeholder="如 1975" placeholder-class="form-placeholder" />
+              <input v-model="eventForm.year" class="form-input" :maxlength="-1" type="number" placeholder="如 1975" placeholder-class="form-placeholder" />
             </view>
             <view class="half-item">
               <text class="form-label">类型</text>
@@ -134,15 +134,15 @@
           </view>
           <view class="form-row">
             <text class="form-label">标题 *</text>
-            <input v-model="eventForm.title" class="form-input" placeholder="事件标题" placeholder-class="form-placeholder" />
+            <input v-model="eventForm.title" class="form-input" :maxlength="-1" placeholder="事件标题" placeholder-class="form-placeholder" />
           </view>
           <view class="form-row">
             <text class="form-label">描述</text>
-            <input v-model="eventForm.description" class="form-input" placeholder="事件描述（可选）" placeholder-class="form-placeholder" />
+            <input v-model="eventForm.description" class="form-input" :maxlength="-1" placeholder="事件描述（可选）" placeholder-class="form-placeholder" />
           </view>
           <view class="form-row">
             <text class="form-label">地点</text>
-            <input v-model="eventForm.location" class="form-input" placeholder="地点（可选）" placeholder-class="form-placeholder" />
+            <input v-model="eventForm.location" class="form-input" :maxlength="-1" placeholder="地点（可选）" placeholder-class="form-placeholder" />
           </view>
           <view class="add-spouse-actions">
             <view class="add-spouse-cancel" @tap="eventEditorOpen = false">

@@ -237,7 +237,8 @@ async function handleSaved() {
   backdrop-filter: blur(4px);
   display: flex;
   align-items: flex-end;
-  z-index: 100;
+  /* 高于管理员工具栏(900)，避免底部编辑/关闭按钮被遮挡；低于编辑弹窗(920)与照片预览(980) */
+  z-index: 910;
 }
 
 .drawer-card {
