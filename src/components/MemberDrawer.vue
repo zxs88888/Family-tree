@@ -39,7 +39,7 @@
               </view>
             </view>
             <view v-if="authStore.canEdit" class="photo-add" @tap="pickPhoto">
-              <text class="photo-add-text">+</text>
+              <text class="photo-add-text">{{ uploading ? '…' : '+' }}</text>
             </view>
           </view>
         </scroll-view>
@@ -48,11 +48,12 @@
       <view v-else-if="authStore.canEdit" class="drawer-section">
         <text class="drawer-label">照片</text>
         <view class="photo-add photo-add--empty" @tap="pickPhoto">
-          <text class="photo-add-text">+ 上传照片</text>
+          <text class="photo-add-text">{{ uploading ? '上传中...' : '+ 上传照片' }}</text>
         </view>
       </view>
 
-      <!-- 照片上传改用 Taro.chooseImage（H5/小程序跨端），无需隐藏 file input -->
+      <!-- 照片上传：原生 file input（H5 最可靠），选择后 File 对象直传 Storage -->
+      <input id="photo-file-input" class="photo-file-input" type="file" accept="image/*" @change="onFilePicked" />
 
       <view v-if="events.length" class="drawer-section">
         <text class="drawer-label">时间线</text>
@@ -163,25 +164,27 @@ function viewPhoto(ph: MemberMedia) {
 }
 
 function pickPhoto() {
-  uploadPhoto()
+  // Taro 的 input 编译为组件外层，需定位内层原生 input 触发文件选择器
+  const root = document.getElementById('photo-file-input')
+  const native = root?.querySelector('input') as HTMLInputElement | null
+  if (native) native.click()
 }
 
-async function uploadPhoto() {
-  if (!member.value || uploading.value) return
+async function onFilePicked(e: Event) {
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0]
+  input.value = ''
+  if (!file || !member.value || uploading.value) return
+  if (file.size > 10 * 1024 * 1024) {
+    Taro.showToast({ title: '图片超过 10MB 限制', icon: 'none', duration: 2000 })
+    return
+  }
+  uploading.value = true
   try {
-    // Taro.chooseImage：H5/小程序跨端标准图片选择（H5 下返回 blob URL）
-    const res = await Taro.chooseImage({ count: 1, sizeType: ['compressed'], sourceType: ['album', 'camera'] })
-    const filePath = res.tempFilePaths?.[0]
-    if (!filePath) return
-    const blob = await (await fetch(filePath)).blob()
-    if (blob.size > 10 * 1024 * 1024) {
-      console.error('[MemberDrawer] 图片超过 10MB 限制')
-      return
-    }
-    uploading.value = true
-    const ext = (blob.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg')
+    // File 对象直传（supabase-js 原生支持），无 base64/blob 中间转换
+    const ext = (file.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg')
     const path = `${member.value.id}/${Date.now()}.${ext}`
-    const { error: upErr } = await supabase.storage.from('family_photos').upload(path, blob)
+    const { error: upErr } = await supabase.storage.from('family_photos').upload(path, file)
     if (upErr) throw new Error(upErr.message)
     const { data: pub } = supabase.storage.from('family_photos').getPublicUrl(path)
     const { error: insErr } = await supabase.from('member_media').insert({
