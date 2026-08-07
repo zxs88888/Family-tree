@@ -192,8 +192,10 @@ async function uploadPhoto() {
     })
     if (insErr) throw new Error(insErr.message)
     await familyStore.loadFromDatabase()
+    Taro.showToast({ title: '照片上传成功', icon: 'success', duration: 1500 })
   } catch (err: any) {
     console.error('[MemberDrawer] 上传失败:', err)
+    Taro.showToast({ title: '上传失败：' + (err.message || '请重试'), icon: 'none', duration: 2500 })
   } finally {
     uploading.value = false
   }
